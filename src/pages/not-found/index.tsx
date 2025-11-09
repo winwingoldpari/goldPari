@@ -1,4 +1,4 @@
-import bgImg from '/BG.png?url'
+import bgImg from '/not-found.png?url'
 export default function NotFoundPage() {
   return (
     <>

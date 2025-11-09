@@ -17,7 +17,7 @@ export const Title = ({
 
   const bgMap: Record<NonNullable<TitleProps['descriptionBg']>, string> = {
     black: 'bg-black py-2.5 px-7 -mt-5',
-    gradient: 'bg-[linear-gradient(90deg,#f48400_0%,#ffa63e_100%)] py-2.5 px-6 md:-mt-4 -mt-2',
+    gradient: 'bg-[linear-gradient(90deg,#f2b705_0%,#8b0303_100%)] py-2.5 px-6 md:-mt-4 -mt-2',
     gray: 'bg-neutral-800',
     transparent: 'bg-transparent'
   };
@@ -26,7 +26,7 @@ export const Title = ({
 
   return (
     <div className={wrap}>
-      <div className={titleCls}>{title}</div>
+      <div className={titleCls} style={{fontFamily: "Climate Crisis, sans-serif"}}>{title}</div>
       {Boolean(description) && (
         <div className={`inline ${descBgCls} text-white uppercase md:text-[25px] text-xl font-semibold rounded-[30px] leading-none max-w-[780px] text-center whitespace-pre-line`}>
           {description}

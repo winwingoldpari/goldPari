@@ -59,7 +59,7 @@ export const CustomSelect = ({
   const base =
     'relative z-50 md:px-4 md:py-3 p-3 border rounded-[30px] md:text-xl text-lg font-medium leading-none transition-colors duration-200 m-0 flex items-center justify-between';
   const outline = 'bg-black-100 border-gray-100 text-white';
-  const filled  = 'bg-green-100 border-green-100 text-black';
+  const filled  = 'bg-yellow-100 border-yellow-100 text-black';
   const ctrlClasses =
     `${base} ${decideVariant === 'filled' ? filled : outline} ${disabled ? 'opacity-60 cursor-not-allowed' : ''} ${className}`;
 

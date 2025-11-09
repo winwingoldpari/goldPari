@@ -197,7 +197,7 @@ export const BannerItem = ({
 
       <button
         type="button"
-        className="absolute right-4 top-4 p-1.5 border-none outline-0 bg-green-100 rounded-xl hover:bg-green-200 transition-colors"
+        className="absolute right-4 top-4 p-1.5 border-none outline-0 bg-yellow-100 rounded-xl hover:bg-green-200 transition-colors"
         aria-label={`Download banner for ${title}`}
         onClick={handleDownload}
       >

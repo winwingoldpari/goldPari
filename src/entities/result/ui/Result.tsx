@@ -32,7 +32,7 @@ export const Result = ({ data, promocode }: { data: BannerItem[]; promocode: str
   };
 
   return (
-    <div className="relative overflow-hidden bg-[linear-gradient(90deg,#232121_0%,#000_100%)] shadow-[0_0_6px_0_rgba(149,220,0,0.26)] rounded-[40px] flex flex-col md:p-14 p-6 justify-center mt-16">
+    <div className="relative overflow-hidden bg-[linear-gradient(90deg,#232121_0%,#000_100%)] rounded-[40px] flex flex-col md:p-14 p-6 justify-center mt-16">
       <Title
         descriptionBg="gradient"
         title={data.length ? 'RESULTS' : 'No RESULTS'}

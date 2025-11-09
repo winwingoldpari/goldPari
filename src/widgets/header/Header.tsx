@@ -6,14 +6,13 @@ import { useGlobalSettings } from '@/shared/hooks'
 
 export function Header() {
   const { starterPack } = useGlobalSettings();
-  console.log(starterPack)
   return (
     <header className="flex items-center md:justify-between justify-center md:px-7 px-4 md:py-6 py-3 flex-wrap gap-5 absolute top-0 left-0 w-full z-10">
        <NavLink
           to="/"
           aria-label="Casino Banner home"
         >
-          <LogoIcon className="h-4 w-auto" aria-hidden />
+          <LogoIcon className="h-7 w-auto" aria-hidden />
       </NavLink>
       <div className="flex items-center gap-4 text-xs">
         <Button
