@@ -5,7 +5,7 @@ import SportPage from '@/pages/sport'
 import NotFoundPage from '@/pages/not-found'
 import CasinoPage from '@/pages/casino'
 
-const router = createBrowserRouter([
+const routes = [
   {
     path: '/',
     element: <AppLayout />,
@@ -17,7 +17,14 @@ const router = createBrowserRouter([
       { path: '*', element: <NotFoundPage /> },
     ],
   },
-])
+]
+const basename =
+  typeof window !== 'undefined' &&
+  window.location.pathname.startsWith('/promocreator/goldpari')
+    ? '/promocreator/goldpari'
+    : '/'
+
+const router = createBrowserRouter(routes, { basename })
 
 export default function AppRouterProvider() {
   return <RouterProvider router={router} />
