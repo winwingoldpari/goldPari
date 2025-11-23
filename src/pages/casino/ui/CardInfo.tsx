@@ -19,10 +19,10 @@ export const CardInfo = ({ onPromocodeChange }: { onPromocodeChange: (promocode:
     onPromocodeChange(value);
   };
   return (
-    <div className='mt-8 relative overflow-hidden bg-[linear-gradient(90deg,#232121_0%,#000_100%)]  rounded-[40px] flex lg:flex-row flex-col'>
+    <div className='mt-8 relative overflow-hidden bg-[linear-gradient(90deg,#232121_0%,#000_100%)]  rounded-[40px] flex lg:flex-row flex-col md:p-0 p-5'>
       <div className="lg:w-1/2 relative shrink-0">
         <img src={imageUrl} className='absolute -bottom-[200px] left-0 w-full lg:block hidden max-w-[616px] right-0 mx-auto'/>
-        <div className="uppercase md:text-[100px] text-[80px] text-white font-black text-center mt-2" style={{fontFamily: "Climate Crisis, sans-serif"}}>Casino</div>
+        <div className="uppercase md:text-[100px] text-[40px] text-white font-black text-center mt-2" style={{fontFamily: "Climate Crisis, sans-serif"}}>Casino</div>
       </div>
       <div className="flex flex-col md:gap-12 gap-8 flex-1 lg:w-1/2 lg:py-12 lg:pr-16">
         <ChipsGroup 

@@ -9,7 +9,7 @@ export default function CasinoPage() {
   const { casinos, loading } = useCasinos();
   const [promocode, setPromocode] = useState<string>('');
   return (
-    <section className='w-full flex flex-col mt-[130px]'>
+    <section className='w-full flex flex-col'>
       <Container>
         <Title title="Ad Creator" />
         <Button

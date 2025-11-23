@@ -193,7 +193,7 @@ export const CustomSelect = ({
           id="custom-select-listbox"
           role="listbox"
           ref={listRef}
-          className={`absolute -mt-6 pt-8 z-10 text-left w-full bg-black-100 shadow-xl md:max-h-[250px] max-h-[200px] overflow-y-auto ${menuClassName}`}
+          className={`absolute -mt-6 pt-8 z-10 text-left w-full bg-black-100 shadow-xl md:max-h-[210px] max-h-[200px] overflow-y-auto ${menuClassName}`}
         >
           {filtered.length === 0 && (
             <div className="px-6 py-4 text-xl leading-none text-white/70">

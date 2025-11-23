@@ -78,15 +78,15 @@ export const GET_SPORT_BY_ID = gql`
 // Запрос для получения фильтров
 export const GET_FILTERS = gql`
   query GetFilters {
-    allCategories {
+    allCategories(first: 100) {
       title
       id
     }
-    allLocations {
+    allLocations(first: 100) {
       id
       title
     }
-    allSportTypes {
+    allSportTypes(first: 100) {
       id
       title
     }

@@ -10,7 +10,7 @@ export default function SportPage() {
   const { sports, loading } = useSports();
   const [promocode, setPromocode] = useState<string>('');
   return (
-    <section className='w-full flex flex-col mt-[130px] relative'>
+    <section className='w-full flex flex-col relative'>
       <Container>
         <Title title="Ad Creator" />
         <Button

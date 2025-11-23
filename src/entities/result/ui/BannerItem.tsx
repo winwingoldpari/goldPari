@@ -201,7 +201,7 @@ export const BannerItem = ({
         aria-label={`Download banner for ${title}`}
         onClick={handleDownload}
       >
-        <DownloadIcon className="w-12 h-12" />
+        <DownloadIcon className="w-8 h-8" />
       </button>
     </div>
   );
