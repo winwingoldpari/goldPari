@@ -2,7 +2,7 @@ import { CardMenu } from "@/shared/ui/card-menu/CardMenu";
 import { Title } from "@/shared/ui";
 import casinoUrl from '@/shared/assets/Casino.png?url'
 import sportUrl from '@/shared/assets/Sport.png?url';
-import bgImg from '/BG.png?url'
+import bgImg from '@/shared/assets/BG.png?url'
 
 export default function HomePage() {
   return (
