@@ -42,7 +42,7 @@ export function useSports() {
   const { data, loading, error, refetch } = useQuery<GetSportsResponse>(GET_SPORTS, {
     variables: {
       ...(selectedSportType && { sportType: selectedSportType }),
-      ...(selectedCategory && { category: selectedCategory }),
+      ...(selectedCategory && { categorySport: selectedCategory }),
       ...(selectedLocation && { location: selectedLocation }),
       first: 500
     }

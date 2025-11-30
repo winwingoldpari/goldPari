@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Peace Sans';
+  src: url('./shared/fonts/Peace Sans Webfont.woff2') format('woff2'),
+       url('./shared/fonts/Peace Sans Webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 @theme {
   /* Primary brand palette */
@@ -18,7 +26,7 @@
 }
 
 :root {
-  font-family: 'Montserrat', system-ui, sans-serif;
+  font-family: 'Peace Sans', 'Montserrat', system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 

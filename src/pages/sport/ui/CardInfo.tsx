@@ -8,7 +8,7 @@ export const CardInfo = ({ onPromocodeChange }: { onPromocodeChange: (promocode:
   const [promocode, setPromocode] = useState<string>('');
   const {
     sportTypes,
-    categories,
+    categorySports,
     locations,
     selectedLocation,
     setSelectedSportType,
@@ -21,12 +21,12 @@ export const CardInfo = ({ onPromocodeChange }: { onPromocodeChange: (promocode:
     onPromocodeChange(value);
   };
   return (
-    <div className='mt-8 relative overflow-hidden bg-[linear-gradient(90deg,#232121_0%,#000_100%)] shadow-[0_0_21px_0_rgba(149,220,0,0.26)] rounded-[40px] flex lg:flex-row flex-col md:p-0 p-5'>
+    <div className='mt-8 relative overflow-hidden bg-[linear-gradient(90deg,#232121_0%,#000_100%)] rounded-[40px] flex lg:flex-row flex-col md:p-0 p-5'>
       <div className="lg:w-1/2 relative shrink-0">
-        <img src={imageUrl} className='absolute -bottom-14 left-0 right-0 mx-auto w-full lg:block hidden max-w-[627px]'/>
-        <div className="uppercase md:text-[100px] text-[40px] text-white font-black text-center lg:mt-4 mt-2" style={{fontFamily: "Climate Crisis, sans-serif"}}>Sport</div>
+        <img src={imageUrl} className='absolute 2xl:-bottom-[85px] -bottom-[230px] left-0 w-full lg:block hidden 2xl:max-w-[627px] max-w-[598px] right-0 mx-auto'/>
+        <div className="uppercase 2xl:text-[100px] md:text-[60px] text-[40px] text-white font-black text-center lg:mt-4 mt-2" style={{fontFamily: "Climate Crisis, sans-serif"}}>Sport</div>
       </div>
-      <div className="flex flex-col md:gap-12 gap-8 flex-1 lg:w-1/2 lg:py-12 lg:pr-16 md:p-6 p-0">
+      <div className="flex flex-col 2xl:gap-12 gap-6 flex-1 lg:w-1/2 2xl:py-12 lg:py-8 lg:pr-16 p-6">
         <ChipsGroup
           label='Choose sport type'
           options={[
@@ -37,12 +37,12 @@ export const CardInfo = ({ onPromocodeChange }: { onPromocodeChange: (promocode:
         <ChipsGroup
           label='Choose banner category'
           options={[
-            ...categories.map((category: { id: string; title: string }) => ({ label: category.title, value: category.id }))
+            ...categorySports.map((category: { id: string; title: string }) => ({ label: category.title, value: category.id }))
           ]}
           onChange={(v) => setSelectedCategory(Array.isArray(v) ? String(v[0] || '') || null : String(v || '') || null)}
         />
-        <div className="flex flex-col md:gap-6 gap-4">
-          <div className="md:text-[32px] text-xl text-white font-medium leading-[100%]">Choose the GEO</div>
+        <div className="flex flex-col 2xl:gap-6 gap-4">
+          <div className="2xl:text-[32px] text-xl text-white font-medium leading-[100%] uppercase">Choose the GEO</div>
           <CustomSelect
             options={locations.map((location: { id: string; title: string }) => ({ label: location.title, value: location.id }))}
             placeholder="Select"
@@ -50,8 +50,8 @@ export const CardInfo = ({ onPromocodeChange }: { onPromocodeChange: (promocode:
             onChange={(v) => setSelectedLocation(Array.isArray(v) ? String(v[0] || '') || null : String(v || '') || null)}
           />
         </div>
-        <div className="flex flex-col md:gap-6 gap-4">
-          <div className="md:text-[32px] text-xl text-white font-medium leading-[100%]">Enter the promocode</div>
+        <div className="flex flex-col 2xl:gap-6 gap-4">
+          <div className="2xl:text-[32px] text-xl text-white font-medium leading-[100%] uppercase">Enter the promocode</div>
           <Input 
             placeholder='Type here'
             value={promocode}

@@ -38,8 +38,8 @@ export const GET_CASINO_BY_ID = gql`
 `
 
 export const GET_SPORTS = gql`
-  query GetSports($sportType: ItemId, $category: ItemId, $location: ItemId, $first: IntType) {
-    allSports(filter: {sportType: {eq: $sportType}, category: {eq: $category}, location: {eq: $location}}, first: $first) {
+  query GetSports($sportType: ItemId, $categorySport: ItemId, $location: ItemId, $first: IntType) {
+    allSports(filter: {sportType: {eq: $sportType}, category: {eq: $categorySport}, location: {eq: $location}}, first: $first) {
       id
       title
       image {
@@ -79,6 +79,10 @@ export const GET_SPORT_BY_ID = gql`
 export const GET_FILTERS = gql`
   query GetFilters {
     allCategories(first: 100) {
+      title
+      id
+    }
+    allCategorySports(first: 100) {
       title
       id
     }

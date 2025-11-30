@@ -32,8 +32,8 @@ function getClassName({
   className,
 }: Pick<ButtonOwnProps<ElementType>, 'fullWidth' | 'className'>) {
   const classes = [
-    'inline-flex select-none items-center justify-center gap-2 rounded-xl',
-    'bg-[linear-gradient(270deg,#f2b705_0%,#ffd452_45.19%,#f2b705_100%)] px-4 py-2.5 text-lg font-[700] uppercase text-black leading-1',
+        'inline-flex select-none items-center justify-center gap-2 rounded-xl relative',
+    'bg-[linear-gradient(270deg,#f2b705_0%,#ffd452_45.19%,#f2b705_100%)] md:px-5 md:py-2 px-2 py-1 text-lg font-[700] uppercase text-black leading-1',
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-300',
     'disabled:pointer-events-none disabled:translate-y-0 disabled:shadow-[0_6px_0_rgba(0,0,0,0.25)] disabled:opacity-60',
     fullWidth ? 'w-full' : '',

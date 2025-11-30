@@ -5,6 +5,7 @@ export interface AppState {
   casinos: any[]
   sports: any[]
   categories: any[]
+  categorySports: any[]
   locations: any[]
   sportTypes: any[]
   
@@ -21,6 +22,7 @@ export interface AppState {
   setCasinos: (casinos: any[]) => void
   setSports: (sports: any[]) => void
   setCategories: (categories: any[]) => void
+  setCategorySports: (categorySports: any[]) => void
   setLocations: (locations: any[]) => void
   setSportTypes: (sportTypes: any[]) => void
   setLoading: (loading: boolean) => void
@@ -36,6 +38,7 @@ export const useAppStore = create<AppState>((set) => ({
   casinos: [],
   sports: [],
   categories: [],
+  categorySports: [],
   locations: [],
   sportTypes: [],
   loading: false,
@@ -48,6 +51,7 @@ export const useAppStore = create<AppState>((set) => ({
   setCasinos: (casinos) => set({ casinos }),
   setSports: (sports) => set({ sports }),
   setCategories: (categories) => set({ categories }),
+  setCategorySports: (categorySports) => set({ categorySports }),
   setLocations: (locations) => set({ locations }),
   setSportTypes: (sportTypes) => set({ sportTypes }),
   setLoading: (loading) => set({ loading }),

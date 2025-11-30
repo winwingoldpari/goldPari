@@ -34,6 +34,7 @@ export const CustomSelect = ({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [hover, setHover] = useState<number>(-1);
+  const [focused, setFocused] = useState(false);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -57,9 +58,9 @@ export const CustomSelect = ({
     variant === 'auto' ? (selected ? 'filled' : 'outline') : variant;
 
   const base =
-    'relative z-50 md:px-4 md:py-3 p-3 border rounded-[30px] md:text-xl text-lg font-medium leading-none transition-colors duration-200 m-0 flex items-center justify-between';
+    'relative h-full z-50 md:px-6 md:py-2 p-3 border rounded-[30px] md:text-xl text-lg font-medium leading-none transition-colors duration-200 m-0 flex items-center gap-2';
   const outline = 'bg-black-100 border-gray-100 text-white';
-  const filled  = 'bg-yellow-100 border-yellow-100 text-black';
+  const filled  = 'bg-green-100 border-green-100 text-black';
   const ctrlClasses =
     `${base} ${decideVariant === 'filled' ? filled : outline} ${disabled ? 'opacity-60 cursor-not-allowed' : ''} ${className}`;
 
@@ -146,7 +147,7 @@ export const CustomSelect = ({
     : (selectedLabel ?? (selected !== null ? String(selected) : ''));
 
   return (
-    <div ref={rootRef} className="relative inline-block w-[150px]" onKeyDown={onKeyDown}>
+    <div ref={rootRef} className="relative inline-block 2xl:w-[150px] w-[136px] 2xl:h-12 h-10" onKeyDown={onKeyDown}>
       <div
         role="combobox"
         aria-expanded={open}
@@ -166,8 +167,10 @@ export const CustomSelect = ({
         <input
           ref={inputRef}
           className={`bg-transparent outline-none border-0 p-0 m-0 w-full ${inputTextCls} placeholder:truncate text-left`}
-          placeholder={placeholder}
+          placeholder={open || focused ? '' : placeholder}
           value={display}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           onChange={(e) => {
             if (!open) openMenu();
             setQuery(e.target.value);

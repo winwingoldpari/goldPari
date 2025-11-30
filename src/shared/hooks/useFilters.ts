@@ -11,18 +11,21 @@ interface FilterItem {
 
 interface GetFiltersResponse {
   allCategories: FilterItem[];
+  allCategorySports: FilterItem[];
   allLocations: FilterItem[];
   allSportTypes: FilterItem[];
 }
 
 export function useFilters() {
   const { 
-    setCategories, 
+    setCategories,
+    setCategorySports, 
     setLocations, 
     setSportTypes, 
     setLoading, 
     setError,
     categories,
+    categorySports,
     locations,
     sportTypes,
     selectedCategory,
@@ -43,10 +46,11 @@ export function useFilters() {
   React.useEffect(() => {
     if (data) {
       setCategories(data.allCategories || [])
+      setCategorySports(data.allCategorySports || [])
       setLocations(data.allLocations || [])
       setSportTypes(data.allSportTypes || [])
     }
-  }, [data, setCategories, setLocations, setSportTypes])
+  }, [data, setCategories, setCategorySports, setLocations, setSportTypes])
 
   React.useEffect(() => {
     if (error) {
@@ -57,6 +61,7 @@ export function useFilters() {
 
   return {
     categories,
+    categorySports,
     locations,
     sportTypes,
     selectedCategory,

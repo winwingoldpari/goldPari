@@ -11,9 +11,9 @@ export const Title = ({
   descriptionBg = 'black',
   descriptionBgClass,
 }: TitleProps) => {
-  const wrap = 'flex flex-col gap-0 items-center px-4';
+  const wrap = 'flex flex-col gap-0 items-center px-4 relative';
   const titleCls =
-    'md:text-[95px] text-[40px] leading-none font-[900] text-white uppercase';
+    '2xl:text-[95px] md:text-[64px] text-[40px] leading-none font-[900] text-white uppercase';
 
   const bgMap: Record<NonNullable<TitleProps['descriptionBg']>, string> = {
     black: 'bg-black py-2.5 px-7 md:-mt-4 -mt-2',
@@ -28,7 +28,7 @@ export const Title = ({
     <div className={wrap}>
       <div className={titleCls} style={{fontFamily: "Climate Crisis, sans-serif"}}>{title}</div>
       {Boolean(description) && (
-        <div className={`inline ${descBgCls} text-white uppercase md:text-[25px] text-lg font-semibold rounded-[30px] leading-none max-w-[780px] text-center whitespace-pre-line`}>
+        <div className={`inline ${descBgCls} text-white uppercase 2xl:text-lg text-base font-semibold rounded-[30px] leading-none max-w-[780px] text-center whitespace-pre-line`}>
           {description}
         </div>
       )}

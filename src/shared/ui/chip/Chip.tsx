@@ -32,7 +32,7 @@ export const Chip = ({
   };
 
   const base =
-    'md:py-3.5 md:px-4 p-3 min-w-[150px] border rounded-[30px] md:text-xl text-lg font-medium leading-none transition-colors duration-200 m-0';
+    'md:py-3.5 md:px-8 p-3 min-w-[133px] 2xl:h-12 h-10 border rounded-[30px] 2xl:text-xl text-lg font-medium leading-none flex items-center justify-center transition-colors duration-200 m-0';
   const passive = 'bg-black-100 border-gray-100 text-white';
   const activeCls = 'bg-yellow-100 border-yellow-100 text-black';
   const finalCls = `${base} ${active ? activeCls : passive} ${className}`;
