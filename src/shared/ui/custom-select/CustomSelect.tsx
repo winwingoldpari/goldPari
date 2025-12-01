@@ -58,7 +58,7 @@ export const CustomSelect = ({
     variant === 'auto' ? (selected ? 'filled' : 'outline') : variant;
 
   const base =
-    'relative h-full z-50 md:px-6 md:py-2 p-3 border rounded-[30px] md:text-xl text-lg font-medium leading-none transition-colors duration-200 m-0 flex items-center gap-2';
+    'relative h-full z-50 md:px-6 md:py-2 p-3 border rounded-[30px] md:text-lg text-lg font-medium leading-none transition-colors duration-200 m-0 flex items-center gap-2';
   const outline = 'bg-black-100 border-gray-100 text-white';
   const filled  = 'bg-green-100 border-green-100 text-black';
   const ctrlClasses =
@@ -147,7 +147,7 @@ export const CustomSelect = ({
     : (selectedLabel ?? (selected !== null ? String(selected) : ''));
 
   return (
-    <div ref={rootRef} className="relative inline-block 2xl:w-[150px] w-[136px] 2xl:h-12 h-10" onKeyDown={onKeyDown}>
+    <div ref={rootRef} className="relative inline-block 2xl:w-[180px] w-[155px] 2xl:h-12 h-10" onKeyDown={onKeyDown}>
       <div
         role="combobox"
         aria-expanded={open}
