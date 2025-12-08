@@ -24,13 +24,13 @@ interface GetCasinosResponse {
 export function useCasinos() {
   const { setCasinos, setLoading, setError, selectedCategory, selectedLocation } = useAppStore()
   
-  const shouldSkip = !selectedCategory || !selectedLocation
+  const shouldSkip = selectedCategory.length === 0 || !selectedLocation
   
   const { data, loading, error, refetch } = useQuery<GetCasinosResponse>(GET_CASINOS, {
     skip: shouldSkip,
     variables: {
-      ...(selectedCategory && { category: selectedCategory }),
-      ...(selectedLocation && { location: selectedLocation }),
+      category: selectedCategory.length > 0 ? selectedCategory : undefined,
+      location: selectedLocation || undefined,
       first: 500
     },
     errorPolicy: 'all',
@@ -42,10 +42,11 @@ export function useCasinos() {
     if (shouldSkip) {
       setLoading(false)
       setCasinos([])
+      setError(null)
     } else {
       setLoading(loading)
     }
-  }, [loading, setLoading, setCasinos, shouldSkip])
+  }, [loading, setLoading, setCasinos, setError, shouldSkip])
 
   React.useEffect(() => {
     if (data && !shouldSkip) {

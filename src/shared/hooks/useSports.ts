@@ -39,14 +39,14 @@ interface GetSportsResponse {
 export function useSports() {
   const { setSports, setLoading, setError, selectedSportType, selectedCategory, selectedLocation } = useAppStore()
   
-  const shouldSkip = !selectedSportType || !selectedCategory || !selectedLocation
+  const shouldSkip = selectedSportType.length === 0 || selectedCategory.length === 0 || !selectedLocation
   
   const { data, loading, error, refetch } = useQuery<GetSportsResponse>(GET_SPORTS, {
     skip: shouldSkip,
     variables: {
-      ...(selectedSportType && { sportType: selectedSportType }),
-      ...(selectedCategory && { categorySport: selectedCategory }),
-      ...(selectedLocation && { location: selectedLocation }),
+      sportType: selectedSportType.length > 0 ? selectedSportType : undefined,
+      categorySport: selectedCategory.length > 0 ? selectedCategory : undefined,
+      location: selectedLocation || undefined,
       first: 500
     },
     errorPolicy: 'all',
@@ -58,10 +58,11 @@ export function useSports() {
     if (shouldSkip) {
       setLoading(false)
       setSports([])
+      setError(null)
     } else {
       setLoading(loading)
     }
-  }, [loading, setLoading, setSports, shouldSkip])
+  }, [loading, setLoading, setSports, setError, shouldSkip])
 
   React.useEffect(() => {
     if (data && !shouldSkip) {

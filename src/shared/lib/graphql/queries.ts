@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export const GET_CASINOS = gql`
-  query GetCasinos($category: ItemId, $location: ItemId, $first: IntType) {
-    allCasinos(filter: {category: {eq: $category}, loc: {eq: $location}}, first: $first) {
+  query GetCasinos($category: [ItemId!], $location: ItemId, $first: IntType) {
+    allCasinos(filter: {category: {in: $category}, loc: {eq: $location}}, first: $first) {
       id
       title
       image {
@@ -38,8 +38,8 @@ export const GET_CASINO_BY_ID = gql`
 `
 
 export const GET_SPORTS = gql`
-  query GetSports($sportType: ItemId, $categorySport: ItemId, $location: ItemId, $first: IntType) {
-    allSports(filter: {sportType: {eq: $sportType}, category: {eq: $categorySport}, location: {eq: $location}}, first: $first) {
+  query GetSports($sportType: [ItemId!], $categorySport: [ItemId!], $location: ItemId, $first: IntType) {
+    allSports(filter: {sportType: {in: $sportType}, category: {in: $categorySport}, location: {eq: $location}}, first: $first) {
       id
       title
       image {

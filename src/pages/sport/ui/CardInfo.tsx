@@ -10,6 +10,8 @@ export const CardInfo = ({ onPromocodeChange }: { onPromocodeChange: (promocode:
     sportTypes,
     categorySports,
     locations,
+    selectedCategory,
+    selectedSportType,
     selectedLocation,
     setSelectedSportType,
     setSelectedCategory,
@@ -29,17 +31,21 @@ export const CardInfo = ({ onPromocodeChange }: { onPromocodeChange: (promocode:
       <div className="flex flex-col 2xl:gap-12 gap-6 flex-1 lg:w-1/2 2xl:py-12 lg:py-8 lg:pr-16 p-6">
         <ChipsGroup
           label='Choose sport type'
+          mode="multiple"
+          value={selectedSportType || []}
           options={[
             ...sportTypes.map((sport: { id: string; title: string }) => ({ label: sport.title, value: sport.id }))
           ]}
-          onChange={(v) => setSelectedSportType(Array.isArray(v) ? String(v[0] || '') || null : String(v || '') || null)}
+          onChange={(v) => setSelectedSportType(Array.isArray(v) ? v.map(String) : [])}
         />
         <ChipsGroup
           label='Choose banner category'
+          mode="multiple"
+          value={selectedCategory || []}
           options={[
             ...categorySports.map((category: { id: string; title: string }) => ({ label: category.title, value: category.id }))
           ]}
-          onChange={(v) => setSelectedCategory(Array.isArray(v) ? String(v[0] || '') || null : String(v || '') || null)}
+          onChange={(v) => setSelectedCategory(Array.isArray(v) ? v.map(String) : [])}
         />
         <div className="flex flex-col 2xl:gap-6 gap-4">
           <div className="2xl:text-[32px] text-xl text-white font-medium leading-[100%] uppercase">Choose the GEO</div>

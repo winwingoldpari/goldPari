@@ -14,9 +14,9 @@ export interface AppState {
   error: string | null
   
   // Filters
-  selectedCategory: string | null
+  selectedCategory: string[]
   selectedLocation: string | null
-  selectedSportType: string | null
+  selectedSportType: string[]
   
   // Actions
   setCasinos: (casinos: any[]) => void
@@ -27,9 +27,9 @@ export interface AppState {
   setSportTypes: (sportTypes: any[]) => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
-  setSelectedCategory: (category: string | null) => void
+  setSelectedCategory: (category: string[]) => void
   setSelectedLocation: (location: string | null) => void
-  setSelectedSportType: (sportType: string | null) => void
+  setSelectedSportType: (sportType: string[]) => void
   clearFilters: () => void
 }
 
@@ -43,9 +43,9 @@ export const useAppStore = create<AppState>((set) => ({
   sportTypes: [],
   loading: false,
   error: null,
-  selectedCategory: null,
+  selectedCategory: [],
   selectedLocation: null,
-  selectedSportType: null,
+  selectedSportType: [],
   
   // Actions
   setCasinos: (casinos) => set({ casinos }),
@@ -60,8 +60,8 @@ export const useAppStore = create<AppState>((set) => ({
   setSelectedLocation: (selectedLocation) => set({ selectedLocation }),
   setSelectedSportType: (selectedSportType) => set({ selectedSportType }),
   clearFilters: () => set({ 
-    selectedCategory: null, 
+    selectedCategory: [], 
     selectedLocation: null, 
-    selectedSportType: null 
+    selectedSportType: [] 
   }),
 }))
