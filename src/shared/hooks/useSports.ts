@@ -39,35 +39,46 @@ interface GetSportsResponse {
 export function useSports() {
   const { setSports, setLoading, setError, selectedSportType, selectedCategory, selectedLocation } = useAppStore()
   
+  const shouldSkip = !selectedSportType || !selectedCategory || !selectedLocation
+  
   const { data, loading, error, refetch } = useQuery<GetSportsResponse>(GET_SPORTS, {
+    skip: shouldSkip,
     variables: {
       ...(selectedSportType && { sportType: selectedSportType }),
       ...(selectedCategory && { categorySport: selectedCategory }),
       ...(selectedLocation && { location: selectedLocation }),
       first: 500
-    }
+    },
+    errorPolicy: 'all',
+    fetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: false
   })
 
   React.useEffect(() => {
-    setLoading(loading)
-  }, [loading, setLoading])
+    if (shouldSkip) {
+      setLoading(false)
+      setSports([])
+    } else {
+      setLoading(loading)
+    }
+  }, [loading, setLoading, setSports, shouldSkip])
 
   React.useEffect(() => {
-    if (data) {
+    if (data && !shouldSkip) {
       setSports(data.allSports || [])
     }
-  }, [data, setSports])
+  }, [data, setSports, shouldSkip])
 
   React.useEffect(() => {
-    if (error) {
+    if (error && !shouldSkip) {
       setError(error.message)
       handleGraphQLError(error, 'Sports')
     }
-  }, [error, setError])
+  }, [error, setError, shouldSkip])
 
   return {
-    sports: data?.allSports || [],
-    loading,
+    sports: shouldSkip ? [] : (data?.allSports || []),
+    loading: shouldSkip ? false : loading,
     error,
     refetch,
   }
