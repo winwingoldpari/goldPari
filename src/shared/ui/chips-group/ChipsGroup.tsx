@@ -68,9 +68,9 @@ export const ChipsGroup = ({
   };
 
   return (
-    <div role="group" className={`flex flex-col 2xl:gap-6 gap-4 ${className}`}>
-      {label && <div className="2xl:text-[32px] text-xl text-white font-medium leading-[100%] uppercase">{label}</div>}
-      <div className="flex flex-wrap md:gap-6 gap-4">
+    <div role="group" className={`flex flex-col gap-4 ${className}`}>
+      {label && <div className="2xl:text-[28px] text-[22px] text-white font-medium leading-[100%]">{label}</div>}
+      <div className="flex flex-wrap gap-4">
         {options.map((opt) => (
           <Chip
             key={String(opt.value)}

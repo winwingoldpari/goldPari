@@ -17,10 +17,11 @@ interface BannerItemData {
 interface BannerListProps {
   data: BannerItemData[];
   promocode: string;
+  promoCodes: string[];
   onStageRefs: (refs: { [key: string]: any }) => void;
 }
 
-export const BannerList = ({ data, promocode, onStageRefs }: BannerListProps) => {
+export const BannerList = ({ data, promocode, promoCodes, onStageRefs }: BannerListProps) => {
   const stageRefs = useRef<{ [key: string]: any }>({});
 
   const handleStageRef = (id: string, ref: any) => {
@@ -41,6 +42,7 @@ export const BannerList = ({ data, promocode, onStageRefs }: BannerListProps) =>
           title={item.title}
           image={item.image}
           promocode={promocode}
+          promoCodes={promoCodes}
           onStageRef={handleStageRef}
         />
       ))}

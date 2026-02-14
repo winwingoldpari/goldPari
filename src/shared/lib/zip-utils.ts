@@ -3,7 +3,7 @@
  */
 
 import JSZip from 'jszip';
-import { BASE_SIZE, createDataURL } from './konva-utils';
+import { BASE_SIZE, createDataURL, calculatePromoDimensions } from './konva-utils';
 import { handleDownloadError, showSuccess } from './toast';
 
 interface BannerItem {
@@ -22,11 +22,13 @@ interface BannerItem {
  */
 export const createBannersZip = async (
   data: BannerItem[],
-  stageRefs: { [key: string]: any }
+  stageRefs: { [key: string]: any },
+  promoCodes: string[] = []
 ): Promise<void> => {
   if (data.length === 0) return;
 
   const zip = new JSZip();
+  const codes = promoCodes.length > 0 ? promoCodes : [''];
 
   try {
     const promises = data.map(async (item, index) => {
@@ -37,11 +39,47 @@ export const createBannersZip = async (
       const fallback = BASE_SIZE;
       const targetW = propW ?? fallback;
       const pixelRatio = Math.max(1, Math.min(16, targetW / stageRef.width()));
+      const stageSize = stageRef.width();
+      const { bottomPad } = calculatePromoDimensions(stageSize);
+      const promoNode = stageRef.findOne?.('.promo-text');
+      const original = promoNode
+        ? {
+            text: promoNode.text(),
+            offsetX: promoNode.offsetX(),
+            y: promoNode.y(),
+            visible: promoNode.visible(),
+          }
+        : null;
 
-      const dataURL = createDataURL(stageRef, pixelRatio);
-      const base64Data = dataURL.split(',')[1];
-      const fileName = `${item.title.replace(/[^a-zA-Z0-9]/g, '_')}_${index + 1}.png`;
-      zip.file(fileName, base64Data, { base64: true });
+      const titleSafe = item.title.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40) || 'banner';
+
+      codes.forEach((code, codeIndex) => {
+        if (promoNode) {
+          const nextText = code ?? '';
+          promoNode.text(nextText);
+          const w = promoNode.width();
+          const h = promoNode.height();
+          promoNode.offsetX(w / 2);
+          promoNode.y(stageRef.height() - bottomPad - h);
+          promoNode.visible(Boolean(nextText));
+          promoNode.getLayer()?.batchDraw();
+        }
+
+        const dataURL = createDataURL(stageRef, pixelRatio);
+        const base64Data = dataURL.split(',')[1];
+        const codeSafe = code ? code.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40) : '';
+        const codePart = codeSafe ? `_${codeSafe}` : '';
+        const fileName = `${titleSafe}_${index + 1}-${codeIndex + 1}${codePart}.png`;
+        zip.file(fileName, base64Data, { base64: true });
+      });
+
+      if (promoNode && original) {
+        promoNode.text(original.text);
+        promoNode.offsetX(original.offsetX);
+        promoNode.y(original.y);
+        promoNode.visible(original.visible);
+        promoNode.getLayer()?.batchDraw();
+      }
     });
 
     await Promise.all(promises);
@@ -54,7 +92,7 @@ export const createBannersZip = async (
     link.click();
     URL.revokeObjectURL(url);
 
-    showSuccess(`All ${data.length} banners downloaded successfully!`);
+    showSuccess(`All ${data.length * codes.length} banners downloaded successfully!`);
   } catch (error) {
     console.error('Error creating zip:', error);
     handleDownloadError(error, 'banners archive');

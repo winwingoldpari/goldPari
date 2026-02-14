@@ -15,10 +15,11 @@
   --color-primary-50: #f0fdf4;
   --color-primary-100: #dcfce7;
   --color-primary-600: #16a34a;
-  --color-green-100: #95DC00;
+  --color-yellow-100: #95DC00;
   --color-black-100: #2B2B2B;
   --color-gray-100: #969696;
   --color-yellow-100: #F2B705;
+  --font-climate: "Climate Crisis", sans-serif;
   /* App surface + text + subtle divider */
   --color-surface: #0b1220;
   --color-foreground: #e5e7eb;
@@ -26,7 +27,7 @@
 }
 
 :root {
-  font-family: 'Peace Sans', 'Montserrat', system-ui, sans-serif;
+  font-family: 'Montserrat', system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -59,4 +60,3 @@ button {
   outline: none;
   cursor: pointer;
 }
-

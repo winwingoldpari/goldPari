@@ -24,6 +24,7 @@ interface BannerItemProps {
     };
   };
   promocode: string;
+  promoCodes: string[];
   onStageRef: (id: string, ref: any) => void;
 }
 
@@ -32,6 +33,7 @@ export const BannerItem = ({
   title, 
   image, 
   promocode, 
+  promoCodes,
   onStageRef 
 }: BannerItemProps) => {
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
@@ -140,6 +142,55 @@ export const BannerItem = ({
     node.getLayer()?.batchDraw();
   }, [promocode, promoFontSize]);
 
+  const sanitizeFilePart = (value: string) =>
+    value.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40);
+
+  const createFileName = (code: string | null, index: number, total: number) => {
+    if (total <= 1) {
+      return `${title}-banner.png`;
+    }
+    const titleSafe = sanitizeFilePart(title) || 'banner';
+    const codeSafe = code ? sanitizeFilePart(code) : '';
+    const codePart = codeSafe ? `_${codeSafe}` : '';
+    return `${titleSafe}_${index + 1}${codePart}.png`;
+  };
+
+  const capturePromoState = () => {
+    const node = promoTextRef.current as any;
+    if (!node) return null;
+
+    return {
+      text: node.text(),
+      offsetX: node.offsetX(),
+      y: node.y(),
+      visible: node.visible(),
+    };
+  };
+
+  const applyPromoText = (code: string | null) => {
+    const node = promoTextRef.current as any;
+    if (!node) return;
+
+    const nextText = code ?? '';
+    node.text(nextText);
+    const w = node.width();
+    const h = node.height();
+    node.offsetX(w / 2);
+    node.y(stageSize - bottomPad - h);
+    node.visible(Boolean(nextText));
+    node.getLayer()?.batchDraw();
+  };
+
+  const restorePromoState = (state: { text: string; offsetX: number; y: number; visible: boolean } | null) => {
+    const node = promoTextRef.current as any;
+    if (!node || !state) return;
+    node.text(state.text);
+    node.offsetX(state.offsetX);
+    node.y(state.y);
+    node.visible(state.visible);
+    node.getLayer()?.batchDraw();
+  };
+
   const handleDownload = () => {
     if (!stageRef.current) return;
 
@@ -148,14 +199,32 @@ export const BannerItem = ({
     const { w: targetW } = getTargetSize(imageElement, image?.responsiveImage);
     const pixelRatio = Math.max(1, Math.min(MAX_EXPORT_RATIO, targetW / stageSize));
 
-    const dataURL = createDataURL(stageRef.current, pixelRatio);
+    const codes = promoCodes.length > 0 ? promoCodes : (promocode ? [promocode] : []);
+    const total = codes.length || 1;
 
-    const link = document.createElement('a');
-    link.download = `${title}-banner.png`;
-    link.href = dataURL;
-    link.click();
-    
-    showSuccess(`Banner "${title}" downloaded successfully!`);
+    if (codes.length <= 1) {
+      const dataURL = createDataURL(stageRef.current, pixelRatio);
+      const link = document.createElement('a');
+      link.download = createFileName(codes[0] ?? null, 0, total);
+      link.href = dataURL;
+      link.click();
+      showSuccess(`Banner "${title}" downloaded successfully!`);
+      return;
+    }
+
+    const original = capturePromoState();
+
+    codes.forEach((code, index) => {
+      applyPromoText(code);
+      const dataURL = createDataURL(stageRef.current, pixelRatio);
+      const link = document.createElement('a');
+      link.download = createFileName(code, index, total);
+      link.href = dataURL;
+      link.click();
+    });
+
+    restorePromoState(original);
+    showSuccess(`Downloaded ${codes.length} banners for "${title}"!`);
   };
 
   return (
@@ -177,31 +246,31 @@ export const BannerItem = ({
             />
           )}
 
-          {promocode && (
-            <Text
-              ref={promoTextRef}
-              text={promocode}
-              x={stageSize / 2}
-              y={stageSize - bottomPad - promoDims.h}
-              fontSize={promoFontSize}
-              fontFamily='Montserrat'
-              fontStyle="800"
-              fill="#000"
-              align="center"
-              offsetX={promoDims.w / 2}
-              offsetY={0}
-            />
-          )}
+          <Text
+            ref={promoTextRef}
+            name="promo-text"
+            text={promocode}
+            x={stageSize / 2}
+            y={stageSize - bottomPad - promoDims.h}
+            fontSize={promoFontSize}
+            fontFamily='Montserrat'
+            fontStyle="800"
+            fill="#000"
+            align="center"
+            offsetX={promoDims.w / 2}
+            offsetY={0}
+            visible={Boolean(promocode)}
+          />
         </Layer>
       </Stage>
 
       <button
         type="button"
-        className="absolute right-4 top-4 p-0 border-none outline-0 bg-yellow-100 rounded-xl hover:bg-green-200 transition-colors"
+        className="absolute right-3 top-3 border-none outline-0 2xl:p-1.5 bg-yellow-100 rounded-xl hover:bg-green-200 transition-colors"
         aria-label={`Download banner for ${title}`}
         onClick={handleDownload}
       >
-        <DownloadIcon className="w-8 h-8" />
+        <DownloadIcon className="w-12 h-12" />
       </button>
     </div>
   );

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Title } from '@/shared/ui';
 import { BannerList } from './BannerList';
 import { DownloadAllButton } from './DownloadAllButton';
+import { parsePromocodes } from '@/shared/lib/promocode';
 
 interface BannerItem {
   id: string;
@@ -26,28 +27,32 @@ interface BannerItem {
 
 export const Result = ({ data, promocode }: { data: BannerItem[]; promocode: string }) => {
   const [stageRefs, setStageRefs] = useState<{ [key: string]: any }>({});
+  const promoCodes = useMemo(() => parsePromocodes(promocode), [promocode]);
+  const displayPromocode = promoCodes[0] ?? '';
 
   const handleStageRefs = (refs: { [key: string]: any }) => {
     setStageRefs(refs);
   };
 
   return (
-    <div className="relative overflow-hidden bg-[linear-gradient(90deg,#232121_0%,#000_100%)] rounded-[40px] flex flex-col md:p-14 p-6 justify-center mt-16">
+    <div className="relative overflow-hidden bg-[linear-gradient(90deg,#232121_0%,#000_100%)] rounded-[40px] flex flex-col 2xl:py-12 md:py-10 2xl:px-15 md:px-9 p-6 justify-center mt-16">
       <Title
         descriptionBg="gradient"
-        title={data.length ? 'RESULTS' : 'No RESULTS'}
-        description={data.length ? 'Download the banners' : 'fill the filter'}
+        title={data.length ? 'banners' : 'No RESULTS'}
+        description={data.length ? '' : 'fill the filter'}
       />
       
       <BannerList 
         data={data} 
-        promocode={promocode} 
+        promocode={displayPromocode} 
+        promoCodes={promoCodes}
         onStageRefs={handleStageRefs}
       />
       
       <DownloadAllButton 
         data={data} 
         stageRefs={stageRefs}
+        promoCodes={promoCodes}
       />
     </div>
   );

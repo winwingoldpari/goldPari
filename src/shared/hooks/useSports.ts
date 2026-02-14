@@ -1,6 +1,6 @@
 import React from 'react'
 import { useQuery } from '@apollo/client/react'
-import { GET_SPORTS } from '@/shared/lib/graphql/queries'
+import { GET_SPORTS, GET_SPORT_STORIES } from '@/shared/lib/graphql/queries'
 import { useAppStore } from '@/shared/store'
 import { handleGraphQLError } from '@/shared/lib/toast'
 
@@ -33,15 +33,22 @@ interface Sport {
 }
 
 interface GetSportsResponse {
-  allSports: Sport[];
+  allSports?: Sport[];
+  allSportStories?: Sport[];
 }
 
 export function useSports() {
-  const { setSports, setLoading, setError, selectedSportType, selectedCategory, selectedLocation } = useAppStore()
+  const { setSports, setLoading, setError, selectedSportType, selectedCategory, selectedLocation, selectedFormat } = useAppStore()
   
-  const shouldSkip = selectedSportType.length === 0 || selectedCategory.length === 0 || !selectedLocation
+  const shouldSkip =
+    !selectedFormat ||
+    selectedSportType.length === 0 ||
+    selectedCategory.length === 0 ||
+    !selectedLocation
+
+  const sportsQuery = selectedFormat === 'stories' ? GET_SPORT_STORIES : GET_SPORTS;
   
-  const { data, loading, error, refetch } = useQuery<GetSportsResponse>(GET_SPORTS, {
+  const { data, loading, error, refetch } = useQuery<GetSportsResponse>(sportsQuery, {
     skip: shouldSkip,
     variables: {
       sportType: selectedSportType.length > 0 ? selectedSportType : undefined,
@@ -53,6 +60,8 @@ export function useSports() {
     fetchPolicy: 'cache-first',
     notifyOnNetworkStatusChange: false
   })
+
+  const items = React.useMemo(() => data?.allSportStories ?? data?.allSports ?? [], [data]);
 
   React.useEffect(() => {
     if (shouldSkip) {
@@ -66,9 +75,9 @@ export function useSports() {
 
   React.useEffect(() => {
     if (data && !shouldSkip) {
-      setSports(data.allSports || [])
+      setSports(items)
     }
-  }, [data, setSports, shouldSkip])
+  }, [data, setSports, shouldSkip, items])
 
   React.useEffect(() => {
     if (error && !shouldSkip) {
@@ -78,7 +87,7 @@ export function useSports() {
   }, [error, setError, shouldSkip])
 
   return {
-    sports: shouldSkip ? [] : (data?.allSports || []),
+    sports: shouldSkip ? [] : items,
     loading: shouldSkip ? false : loading,
     error,
     refetch,

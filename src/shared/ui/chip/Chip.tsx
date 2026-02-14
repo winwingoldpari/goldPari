@@ -32,13 +32,13 @@ export const Chip = ({
   };
 
   const base =
-    'md:py-3.5 md:px-8 p-3 min-w-[133px] 2xl:h-12 h-10 border rounded-[30px] 2xl:text-xl text-lg font-medium leading-none flex items-center justify-center transition-colors duration-200 m-0';
-  const passive = 'bg-black-100 border-gray-100 text-white';
+    '2xl:py-4.5 md:py-2.5 md:px-8 p-3 2xl:w-[150px] w-[130px] 2xl:h-12.5 h-10 border rounded-[30px] 2xl:text-xl text-lg font-medium leading-none flex items-center justify-center transition-colors duration-200 m-0';
+  const passive = 'bg-black-100 border-gray-100 text-white hover:border-yellow-100';
   const activeCls = 'bg-yellow-100 border-yellow-100 text-black';
   const finalCls = `${base} ${active ? activeCls : passive} ${className}`;
 
   return (
-    <button
+    <button 
       type="button"
       aria-pressed={active}
       disabled={disabled}

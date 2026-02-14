@@ -17,6 +17,7 @@ export interface AppState {
   selectedCategory: string[]
   selectedLocation: string | null
   selectedSportType: string[]
+  selectedFormat: string | null
   
   // Actions
   setCasinos: (casinos: any[]) => void
@@ -30,6 +31,7 @@ export interface AppState {
   setSelectedCategory: (category: string[]) => void
   setSelectedLocation: (location: string | null) => void
   setSelectedSportType: (sportType: string[]) => void
+  setSelectedFormat: (format: string | null) => void
   clearFilters: () => void
 }
 
@@ -46,6 +48,7 @@ export const useAppStore = create<AppState>((set) => ({
   selectedCategory: [],
   selectedLocation: null,
   selectedSportType: [],
+  selectedFormat: null,
   
   // Actions
   setCasinos: (casinos) => set({ casinos }),
@@ -59,9 +62,11 @@ export const useAppStore = create<AppState>((set) => ({
   setSelectedCategory: (selectedCategory) => set({ selectedCategory }),
   setSelectedLocation: (selectedLocation) => set({ selectedLocation }),
   setSelectedSportType: (selectedSportType) => set({ selectedSportType }),
+  setSelectedFormat: (selectedFormat) => set({ selectedFormat }),
   clearFilters: () => set({ 
     selectedCategory: [], 
     selectedLocation: null, 
-    selectedSportType: [] 
+    selectedSportType: [],
+    selectedFormat: null,
   }),
 }))

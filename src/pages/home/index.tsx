@@ -12,7 +12,7 @@ export default function HomePage() {
       </div>
       <section className="flex flex-col justify-center gap-4 items-center uppercase w-full relative">
         <Title title="Ad Creator" description="Choose options" />
-        <div className="flex md:flex-row flex-col 2xl:gap-[82px] md:gap-11 gap-5 w-full justify-center items-center px-4 my-11">
+        <div className="flex md:flex-row flex-col 2xl:gap-[82px] md:gap-11 gap-5 w-full justify-center items-center px-4 my-7.5">
           <CardMenu title="CASINO" href="/casino" url={casinoUrl} />
           <CardMenu title="Sport" href="/sport" url={sportUrl} />
         </div>

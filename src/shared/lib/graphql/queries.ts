@@ -17,6 +17,23 @@ export const GET_CASINOS = gql`
   }
 `
 
+export const GET_CASINO_STORIES = gql`
+  query GetCasinoStories($category: [ItemId!], $location: ItemId, $first: IntType) {
+    allCasinoStories(filter: {category: {in: $category}, loc: {eq: $location}}, first: $first) {
+      id
+      title
+      image {
+        url
+        alt
+        responsiveImage {
+          width
+          height
+        }
+      }
+    }
+  }
+`
+
 export const GET_CASINO_BY_ID = gql`
   query GetCasinoById($id: ItemId!) {
     casino(filter: { id: { eq: $id } }) {
@@ -51,6 +68,26 @@ export const GET_SPORTS = gql`
         }
       }
 
+    }
+  }
+`
+
+export const GET_SPORT_STORIES = gql`
+  query GetSportStories($sportType: [ItemId!], $categorySport: [ItemId!], $location: ItemId, $first: IntType) {
+    allSportStories(
+      filter: {sportType: {in: $sportType}, category: {in: $categorySport}, location: {eq: $location}}
+      first: $first
+    ) {
+      id
+      title
+      image {
+        url
+        alt
+        responsiveImage {
+          width
+          height
+        }
+      }
     }
   }
 `

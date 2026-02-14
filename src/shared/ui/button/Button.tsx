@@ -1,39 +1,59 @@
 import {
-  type ComponentPropsWithoutRef,
-  type ComponentPropsWithRef,
-  type ElementType,
   type ReactElement,
   type ReactNode,
   forwardRef,
 } from 'react';
-import { Link as RouterLink, type To } from 'react-router-dom';
+import { Link as RouterLink, type LinkProps, type To } from 'react-router-dom';
 
-type PolymorphicRef<T extends ElementType> = ComponentPropsWithRef<T>['ref'];
-
-type ButtonOwnProps<T extends ElementType> = {
-  as?: T;
+type ButtonBaseProps = {
   children: ReactNode;
   icon?: ReactNode;
   iconPosition?: 'left' | 'right';
   fullWidth?: boolean;
   underline?: boolean;
+  variant?: 'primary' | 'secondary';
   className?: string;
-  to?: To;
-  external?: boolean;
 };
 
-type ButtonProps<T extends ElementType> = ButtonOwnProps<T> &
-  Omit<ComponentPropsWithoutRef<T>, keyof ButtonOwnProps<T>>;
+type RouterLinkButtonProps = ButtonBaseProps &
+  Omit<LinkProps, 'to' | 'children' | 'className'> & {
+    to: To;
+    href?: never;
+  };
 
-const DEFAULT_ELEMENT: ElementType = 'button';
+type AnchorButtonProps = ButtonBaseProps &
+  Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'children' | 'className' | 'href'> & {
+    href: string;
+    to?: never;
+    external?: boolean;
+  };
+
+type NativeButtonProps = ButtonBaseProps &
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'className'> & {
+    to?: never;
+    href?: never;
+  };
+
+export type ButtonProps = RouterLinkButtonProps | AnchorButtonProps | NativeButtonProps;
 
 function getClassName({
   fullWidth,
+  variant = 'primary',
   className,
-}: Pick<ButtonOwnProps<ElementType>, 'fullWidth' | 'className'>) {
+  hasIcon = false,
+}: Pick<ButtonBaseProps, 'fullWidth' | 'variant' | 'className'> & { hasIcon?: boolean }) {
+  const variantClasses =
+    variant === 'secondary'
+      ? 'bg-black-100 text-white border border-[#969696] px-5'
+      : 'bg-[linear-gradient(212deg,#f3b809_0%,#fdd047_45.19%,#f3b809_100%)] hover:bg-[linear-gradient(212deg,#ffd75f_0%,#ffdc72_45.19%,#ffd75f_100%)] text-black';
+
+  const pyClasses = hasIcon ? '2xl:py-2.5 py-2.5' : '2xl:py-[13px] py-[13px]';
+
   const classes = [
-        'inline-flex select-none items-center justify-center gap-2 rounded-xl relative',
-    'bg-[linear-gradient(270deg,#f2b705_0%,#ffd452_45.19%,#f2b705_100%)] md:px-5 md:py-2 px-2 py-1 text-lg font-[700] uppercase text-black leading-1',
+    'inline-flex select-none items-center justify-center gap-2 rounded-[12px] relative',
+    'md:px-5 px-4 font-[700] uppercase 2xl:text-[20px] text-sx leading-[1]',
+    pyClasses,
+    variantClasses,
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-300',
     'disabled:pointer-events-none disabled:translate-y-0 disabled:shadow-[0_6px_0_rgba(0,0,0,0.25)] disabled:opacity-60',
     fullWidth ? 'w-full' : '',
@@ -51,68 +71,23 @@ function isInternalHref(href: string) {
   return href.startsWith('/') && !href.startsWith('//');
 }
 
-const ButtonInner = <T extends ElementType = typeof DEFAULT_ELEMENT>(
+const ButtonInner = (
   {
-    as,
     children,
     icon,
     iconPosition = 'left',
     fullWidth = false,
     underline = false,
+    variant = 'primary',
     className,
-    to,
-    external,
     ...restProps
-  }: ButtonProps<T>,
-  ref: PolymorphicRef<T>,
+  }: ButtonProps,
+  ref: React.ForwardedRef<HTMLButtonElement | HTMLAnchorElement>,
 ) => {
-  const { href, target, rel, ...other } = restProps as any;
-
-  let Component: ElementType = DEFAULT_ELEMENT;
-  let finalTo: To | undefined;
-  let finalHref: string | undefined;
-  let finalRel: string | undefined;
-  let finalTarget: string | undefined;
-
-  if (as) {
-    Component = as as ElementType;
-  } else if (to != null) {
-    Component = RouterLink as unknown as ElementType;
-    finalTo = to;
-  } else if (typeof href === 'string' && !external && isInternalHref(href)) {
-    Component = RouterLink as unknown as ElementType;
-    finalTo = href as To;
-  } else if (typeof href === 'string') {
-    Component = 'a';
-    finalHref = href;
-    finalTarget = target;
-    finalRel = rel ?? (finalTarget === '_blank' ? 'noopener noreferrer' : undefined);
-  } else {
-    Component = DEFAULT_ELEMENT;
-  }
-
-  const classNames = getClassName({ fullWidth, className });
+  const classNames = getClassName({ fullWidth, variant, className, hasIcon: Boolean(icon) });
   const labelClasses = ['flex items-center justify-center', underline ? 'underline underline-offset-4' : '']
     .filter(Boolean)
     .join(' ');
-
-  const commonProps: any = {
-    ref,
-    className: classNames,
-    ...other,
-  };
-
-  if (Component === 'button' && !('type' in other)) {
-    commonProps.type = 'button';
-  }
-
-  if (Component === (RouterLink as unknown as ElementType)) {
-    commonProps.to = finalTo!;
-  } else if (Component === 'a') {
-    commonProps.href = finalHref!;
-    if (finalTarget) commonProps.target = finalTarget;
-    if (finalRel) commonProps.rel = finalRel;
-  }
 
   const content = (
     <>
@@ -122,15 +97,56 @@ const ButtonInner = <T extends ElementType = typeof DEFAULT_ELEMENT>(
     </>
   );
 
-  return <Component {...commonProps}>{content}</Component>;
+  if ('to' in restProps && restProps.to != null) {
+    const { to, ...linkProps } = restProps as RouterLinkButtonProps;
+    return (
+      <RouterLink ref={ref as React.ForwardedRef<HTMLAnchorElement>} to={to} className={classNames} {...linkProps}>
+        {content}
+      </RouterLink>
+    );
+  }
+
+  if ('href' in restProps && typeof restProps.href === 'string') {
+    const { href, external, target, rel, ...anchorProps } = restProps as AnchorButtonProps;
+    if (!external && isInternalHref(href)) {
+      return (
+        <RouterLink
+          ref={ref as React.ForwardedRef<HTMLAnchorElement>}
+          to={href}
+          className={classNames}
+          {...anchorProps}
+        >
+          {content}
+        </RouterLink>
+      );
+    }
+
+    const finalRel = rel ?? (target === '_blank' ? 'noopener noreferrer' : undefined);
+    return (
+      <a
+        ref={ref as React.ForwardedRef<HTMLAnchorElement>}
+        href={href}
+        target={target}
+        rel={finalRel}
+        className={classNames}
+        {...anchorProps}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  const { type, ...buttonProps } = restProps as NativeButtonProps;
+  return (
+    <button
+      ref={ref as React.ForwardedRef<HTMLButtonElement>}
+      type={type ?? 'button'}
+      className={classNames}
+      {...buttonProps}
+    >
+      {content}
+    </button>
+  );
 };
 
-type ButtonComponent = <T extends ElementType = typeof DEFAULT_ELEMENT>(
-  props: ButtonProps<T> & { ref?: PolymorphicRef<T> },
-) => ReactElement | null;
-
-const forwardRefWithAs = forwardRef as unknown as <T extends ElementType = typeof DEFAULT_ELEMENT>(
-  render: (props: ButtonProps<T>, ref: PolymorphicRef<T>) => ReactElement | null,
-) => ButtonComponent;
-
-export const Button = forwardRefWithAs(ButtonInner);
+export const Button = forwardRef(ButtonInner);

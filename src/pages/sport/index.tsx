@@ -11,7 +11,7 @@ export default function SportPage() {
   const { sports, loading } = useSports();
   const [promocode, setPromocode] = useState<string>('');
   return (
-    <section className='w-full flex flex-col relative'>
+    <section className='w-full flex flex-col relative mt-50'>
       <BgRound className="absolute top-6 right-0 left-0 bottom-0 mx-auto" />
       <BgRound className="absolute 2xl:top-[866px] top-[666px] 2xl:-right-[600px] -right-[400px] " />
       <BgRound className="absolute 2xl:top-[1266px] top-[1266px] 2xl:-left-[600px] -left-[400px] " />
@@ -19,7 +19,8 @@ export default function SportPage() {
         <Title title="Ad Creator" />
         <Button
           to="/"
-          className='!bg-none !bg-black-100 !text-white !px-8 lg:mt-0 mt-4'
+          variant="secondary"
+          className="lg:mt-0 mt-4"
           icon={<IconArrow />}
         >
           back to menu
@@ -31,4 +32,3 @@ export default function SportPage() {
     </section>
   )
 }
-

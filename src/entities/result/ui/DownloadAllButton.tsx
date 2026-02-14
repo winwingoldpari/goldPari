@@ -17,9 +17,10 @@ interface BannerItemData {
 interface DownloadAllButtonProps {
   data: BannerItemData[];
   stageRefs: { [key: string]: any };
+  promoCodes: string[];
 }
 
-export const DownloadAllButton = ({ data, stageRefs }: DownloadAllButtonProps) => {
+export const DownloadAllButton = ({ data, stageRefs, promoCodes }: DownloadAllButtonProps) => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownloadAll = async () => {
@@ -28,7 +29,7 @@ export const DownloadAllButton = ({ data, stageRefs }: DownloadAllButtonProps) =
     setIsDownloading(true);
     
     try {
-      await createBannersZip(data, stageRefs);
+      await createBannersZip(data, stageRefs, promoCodes);
     } catch (error) {
       console.error('Download failed:', error);
     } finally {

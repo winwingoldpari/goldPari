@@ -31,9 +31,11 @@ export function useFilters() {
     selectedCategory,
     selectedLocation,
     selectedSportType,
+    selectedFormat,
     setSelectedCategory,
     setSelectedLocation,
     setSelectedSportType,
+    setSelectedFormat,
     clearFilters
   } = useAppStore()
   
@@ -67,9 +69,11 @@ export function useFilters() {
     selectedCategory,
     selectedLocation,
     selectedSportType,
+    selectedFormat,
     setSelectedCategory,
     setSelectedLocation,
     setSelectedSportType,
+    setSelectedFormat,
     clearFilters,
     loading,
     error,
