@@ -39,8 +39,9 @@ export const createBannersZip = async (
       const fallback = BASE_SIZE;
       const targetW = propW ?? fallback;
       const pixelRatio = Math.max(1, Math.min(16, targetW / stageRef.width()));
-      const stageSize = stageRef.width();
-      const { bottomPad } = calculatePromoDimensions(stageSize);
+      const stageWidth = stageRef.width();
+      const stageHeight = stageRef.height();
+      const { bottomPad } = calculatePromoDimensions(stageWidth, stageHeight);
       const promoNode = stageRef.findOne?.('.promo-text');
       const original = promoNode
         ? {
@@ -60,7 +61,7 @@ export const createBannersZip = async (
           const w = promoNode.width();
           const h = promoNode.height();
           promoNode.offsetX(w / 2);
-          promoNode.y(stageRef.height() - bottomPad - h);
+          promoNode.y(stageHeight - bottomPad - h);
           promoNode.visible(Boolean(nextText));
           promoNode.getLayer()?.batchDraw();
         }

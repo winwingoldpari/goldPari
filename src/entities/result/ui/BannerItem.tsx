@@ -38,21 +38,26 @@ export const BannerItem = ({
 }: BannerItemProps) => {
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
   const [imageScale, setImageScale] = useState({ scaleX: 1, scaleY: 1, x: 0, y: 0 });
-  const [stageSize, setStageSize] = useState(400);
+  const [stageWidth, setStageWidth] = useState(400);
   const [promoDims, setPromoDims] = useState({ w: 0, h: 0 });
 
   const stageRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const promoTextRef = useRef<any>(null);
 
-  const { promoFontSize, bottomPad } = calculatePromoDimensions(stageSize);
+  const { w: targetW, h: targetH } = getTargetSize(imageElement, image?.responsiveImage);
+  const bannerAspectRatio = targetW > 0 && targetH > 0 ? targetH / targetW : 1;
+  const stageHeight = Math.max(1, stageWidth * bannerAspectRatio);
+  const previewAspectRatio = targetW > 0 && targetH > 0 ? `${targetW} / ${targetH}` : '1 / 1';
+
+  const { promoFontSize, bottomPad } = calculatePromoDimensions(stageWidth, stageHeight);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
     const setIfChanged = (next: number) => {
-      setStageSize((prev) => (prev !== next ? next : prev));
+      setStageWidth((prev) => (prev !== next ? next : prev));
     };
 
     setIfChanged(el.offsetWidth);
@@ -105,8 +110,8 @@ export const BannerItem = ({
   }, [image?.url]);
 
   useEffect(() => {
-    if (imageElement && stageSize > 0) {
-      const scale = calculateImageScale(imageElement, stageSize);
+    if (imageElement && stageWidth > 0 && stageHeight > 0) {
+      const scale = calculateImageScale(imageElement, stageWidth, stageHeight);
       setImageScale((prev) => (
         prev.scaleX !== scale.scaleX ||
         prev.scaleY !== scale.scaleY ||
@@ -116,7 +121,7 @@ export const BannerItem = ({
           : prev
       ));
     }
-  }, [imageElement, stageSize]);
+  }, [imageElement, stageWidth, stageHeight]);
 
   const latestOnStageRef = useRef(onStageRef);
   useEffect(() => {
@@ -176,7 +181,7 @@ export const BannerItem = ({
     const w = node.width();
     const h = node.height();
     node.offsetX(w / 2);
-    node.y(stageSize - bottomPad - h);
+    node.y(stageHeight - bottomPad - h);
     node.visible(Boolean(nextText));
     node.getLayer()?.batchDraw();
   };
@@ -196,8 +201,8 @@ export const BannerItem = ({
 
     prepareContextsForHQ(stageRef.current);
 
-    const { w: targetW } = getTargetSize(imageElement, image?.responsiveImage);
-    const pixelRatio = Math.max(1, Math.min(MAX_EXPORT_RATIO, targetW / stageSize));
+    const safeStageWidth = Math.max(1, stageWidth);
+    const pixelRatio = Math.max(1, Math.min(MAX_EXPORT_RATIO, targetW / safeStageWidth));
 
     const codes = promoCodes.length > 0 ? promoCodes : (promocode ? [promocode] : []);
     const total = codes.length || 1;
@@ -228,11 +233,15 @@ export const BannerItem = ({
   };
 
   return (
-    <div ref={containerRef} className="relative aspect-square w-full">
+    <div
+      ref={containerRef}
+      className="relative w-full"
+      style={{ aspectRatio: previewAspectRatio }}
+    >
       <Stage 
         ref={setStageNode} 
-        width={stageSize} 
-        height={stageSize} 
+        width={stageWidth} 
+        height={stageHeight} 
         className="w-full h-full rounded-2xl overflow-hidden"
       >
         <Layer>
@@ -250,8 +259,8 @@ export const BannerItem = ({
             ref={promoTextRef}
             name="promo-text"
             text={promocode}
-            x={stageSize / 2}
-            y={stageSize - bottomPad - promoDims.h}
+            x={stageWidth / 2}
+            y={stageHeight - bottomPad - promoDims.h}
             fontSize={promoFontSize}
             fontFamily='Montserrat'
             fontStyle="800"
