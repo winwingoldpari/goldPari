@@ -16,7 +16,7 @@ export const Title = ({
     '2xl:text-[70px] md:text-[56px] text-[36px] leading-[1] font-[900] text-white uppercase';
 
   const bgMap: Record<NonNullable<TitleProps['descriptionBg']>, string> = {
-    black: 'bg-black  md:py-2.5 md:px-8 2xl:mt-1 md:mt-3 mt-2 leading-[0.87]',
+    black: 'bg-black  md:py-2.5 md:px-8 2xl:mt-1 md:mt-3 mt-2 p-2 leading-[0.87]',
     gradient: 'bg-[linear-gradient(90deg,#f2b705_0%,#8b0303_100%)] md:py-2.5 md:px-8 2xl:mt-1 md:mt-3 mt-2 leading-[0.87]',
     gray: 'bg-neutral-800',
     transparent: 'bg-transparent',
