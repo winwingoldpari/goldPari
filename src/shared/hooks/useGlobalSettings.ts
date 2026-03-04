@@ -5,6 +5,7 @@ import { handleGraphQLError } from '@/shared/lib/toast'
 
 interface GlobalSetting {
   starterPack: string;
+  feedback: string;
 }
 
 interface GetGlobalSettingsResponse {
@@ -22,6 +23,7 @@ export function useGlobalSettings() {
 
   return {
     starterPack: data?.globalSetting?.starterPack || '',
+    feedback: data?.globalSetting?.feedback || '',
     loading,
     error,
   }

@@ -138,6 +138,7 @@ export const GET_GLOBAL_SETTINGS = gql`
   query GetGlobalSettings {
     globalSetting {
       starterPack
+      feedback
     }
   }
 `

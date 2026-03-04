@@ -10,7 +10,7 @@ export default function HomePage() {
       <div className="absolute top-0 left-0 h-full w-full">
         <img src={bgImg} alt="" className="w-full h-full object-cover"/>
       </div>
-      <section className="flex flex-col justify-center gap-4 items-center uppercase w-full relative">
+      <section className="flex flex-col justify-center gap-4 items-center uppercase w-full relative md:mt-0 mt-25">
         <Title title="Ad Creator" description="Choose options" />
         <div className="flex md:flex-row flex-col 2xl:gap-[82px] md:gap-11 gap-5 w-full justify-center items-center px-4 my-7.5">
           <CardMenu title="CASINO" href="/casino" url={casinoUrl} />

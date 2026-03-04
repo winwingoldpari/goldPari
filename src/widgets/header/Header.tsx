@@ -5,7 +5,7 @@ import { Button, Container } from '@/shared/ui'
 import { useGlobalSettings } from '@/shared/hooks'
 
 export function Header() {
-  const { starterPack } = useGlobalSettings();
+  const { starterPack, feedback } = useGlobalSettings();
   return (
     <header className="md:px-7 px-4 md:py-13 py-3  absolute top-0 left-0 w-full z-10">
       <Container>
@@ -18,7 +18,9 @@ export function Header() {
           </NavLink>
           <div className="flex items-center gap-5 text-xs">
             <Button
-            to="/"
+            href={feedback || "#feedback"}
+            target="_blank"
+            rel="noreferrer"
             variant="secondary"
           >
             Send feedback
