@@ -6,7 +6,7 @@ import { useFilters } from '@/shared/hooks';
 import type { CardInfoViewProps, FilterItem, MultiSelectValue, SelectOption, SingleSelectValue } from '../model/types';
 
 const toOptions = (items: FilterItem[]): SelectOption[] =>
-  items.map((item) => ({ label: item.title, value: item.id }));
+  items.map((item) => ({ label: item.title ?? '', value: item.id }));
 
 const FORMAT_OPTIONS: SelectOption[] = [
   { label: 'Square', value: 'square' },
@@ -58,7 +58,9 @@ const CardInfoView = ({
         options={locationOptions}
         placeholder="Select"
         value={selectedLocation}
-        onChange={onLocationChange}
+        onChange={(value) =>
+          onLocationChange(value === null ? null : Array.isArray(value) ? value[0] ?? null : value)
+        }
       />
       <ChipsGroup
         label='Choose a format'

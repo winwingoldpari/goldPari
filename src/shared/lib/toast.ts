@@ -3,23 +3,33 @@ import { toast } from 'react-toastify'
 /**
  * Утилиты для показа уведомлений через react-toastify
  */
+interface MaybeApolloError {
+  message?: string
+  graphQLErrors?: Array<{ message: string }>
+  networkError?: unknown
+}
 
-export const showError = (message: string, error?: any) => {
+const asMaybeApolloError = (error: unknown): MaybeApolloError | null => {
+  if (typeof error === 'object' && error !== null) return error as MaybeApolloError
+  return null
+}
+
+export const showError = (message: string, error?: unknown) => {
   console.error('API Error:', message, error)
-  
+
   let errorMessage = message
-  
-  // Обрабатываем различные типы ошибок
-  if (error?.message) {
-    errorMessage = `${message}: ${error.message}`
-  } else if (error?.graphQLErrors?.length > 0) {
-    errorMessage = `${message}: ${error.graphQLErrors[0].message}`
-  } else if (error?.networkError) {
+  const apolloError = asMaybeApolloError(error)
+
+  if (apolloError?.message) {
+    errorMessage = `${message}: ${apolloError.message}`
+  } else if (apolloError?.graphQLErrors && apolloError.graphQLErrors.length > 0) {
+    errorMessage = `${message}: ${apolloError.graphQLErrors[0].message}`
+  } else if (apolloError?.networkError) {
     errorMessage = `${message}: Network error`
   } else if (typeof error === 'string') {
     errorMessage = `${message}: ${error}`
   }
-  
+
   toast.error(errorMessage, {
     position: "top-right",
     autoClose: 5000,
@@ -66,14 +76,14 @@ export const showInfo = (message: string) => {
 /**
  * Обработчик ошибок GraphQL
  */
-export const handleGraphQLError = (error: any, context: string = 'API') => {
-  if (error?.graphQLErrors?.length > 0) {
-    const graphQLError = error.graphQLErrors[0]
-    showError(`${context} Error`, graphQLError.message)
-  } else if (error?.networkError) {
+export const handleGraphQLError = (error: unknown, context: string = 'API') => {
+  const apolloError = asMaybeApolloError(error)
+  if (apolloError?.graphQLErrors && apolloError.graphQLErrors.length > 0) {
+    showError(`${context} Error`, apolloError.graphQLErrors[0].message)
+  } else if (apolloError?.networkError) {
     showError(`${context} Network Error`, 'Please check your internet connection')
-  } else if (error?.message) {
-    showError(`${context} Error`, error.message)
+  } else if (apolloError?.message) {
+    showError(`${context} Error`, apolloError.message)
   } else {
     showError(`${context} Error`, 'An unexpected error occurred')
   }
@@ -82,7 +92,7 @@ export const handleGraphQLError = (error: any, context: string = 'API') => {
 /**
  * Обработчик ошибок загрузки изображений
  */
-export const handleImageError = (error: any, imageUrl?: string) => {
+export const handleImageError = (error: unknown, imageUrl?: string) => {
   console.error('Image loading error:', error, imageUrl)
   showWarning(`Failed to load image${imageUrl ? `: ${imageUrl}` : ''}`)
 }
@@ -90,7 +100,7 @@ export const handleImageError = (error: any, imageUrl?: string) => {
 /**
  * Обработчик ошибок скачивания
  */
-export const handleDownloadError = (error: any, filename?: string) => {
+export const handleDownloadError = (error: unknown, filename?: string) => {
   console.error('Download error:', error, filename)
   showError(`Failed to download${filename ? ` ${filename}` : ' file'}`)
 }

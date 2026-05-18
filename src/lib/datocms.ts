@@ -44,9 +44,7 @@ export async function fetchFromDatoCMS<DataT>(
     ? 'https://graphql.datocms.com/preview'
     : 'https://graphql.datocms.com/'
 
-  const token = (apiToken ?? (import.meta as any).env?.VITE_DATOCMS_API_TOKEN) as
-    | string
-    | undefined
+  const token = apiToken ?? import.meta.env.VITE_DATOCMS_API_TOKEN
 
   if (!token) {
     throw new Error(

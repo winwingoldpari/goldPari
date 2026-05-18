@@ -1,75 +1,81 @@
-import React from 'react'
+import { useEffect, useMemo } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { GET_CASINOS, GET_CASINO_STORIES } from '@/shared/lib/graphql/queries'
 import { useAppStore } from '@/shared/store'
 import { handleGraphQLError } from '@/shared/lib/toast'
+import { getUploadDateRange } from '@/shared/lib/upload-date'
 
-interface Casino {
-  id: string;
-  title: string;
-  image?: {
-    url: string;
-    alt?: string;
-    responsiveImage?: {
-      width: number;
-      height: number;
-    };
-  };
-}
+export function useCasinos(enabled: boolean = true) {
+  const { setCasinos, setLoading, setError, selectedCategory, selectedCasinoType, selectedLocation, selectedFormat, selectedUploadDate } = useAppStore()
 
-interface GetCasinosResponse {
-  allCasinos?: Casino[];
-  allCasinoStories?: Casino[];
-}
+  const baseSkip =
+    !enabled ||
+    !selectedFormat ||
+    !selectedCategory ||
+    selectedCategory.length === 0 ||
+    !selectedLocation
 
-export function useCasinos() {
-  const { setCasinos, setLoading, setError, selectedCategory, selectedLocation, selectedFormat } = useAppStore()
-  
-  const shouldSkip = !selectedFormat || selectedCategory.length === 0 || !selectedLocation
+  const isStories = selectedFormat === 'stories'
 
-  const casinosQuery = selectedFormat === 'stories' ? GET_CASINO_STORIES : GET_CASINOS;
-  
-  const { data, loading, error, refetch } = useQuery<GetCasinosResponse>(casinosQuery, {
-    skip: shouldSkip,
-    variables: {
-      category: selectedCategory.length > 0 ? selectedCategory : undefined,
-      location: selectedLocation || undefined,
-      first: 500
-    },
+  const dateRange = useMemo(() => getUploadDateRange(selectedUploadDate), [selectedUploadDate])
+
+  const variables = {
+    category: selectedCategory && selectedCategory.length > 0 ? selectedCategory : undefined,
+    casinoType: selectedCasinoType && selectedCasinoType.length > 0 ? selectedCasinoType : undefined,
+    location: selectedLocation ?? undefined,
+    publishedAtGte: dateRange.publishedAtGte,
+    publishedAtLt: dateRange.publishedAtLt,
+    first: 500,
+  }
+
+  const regular = useQuery(GET_CASINOS, {
+    skip: baseSkip || isStories,
+    variables,
     errorPolicy: 'all',
-    fetchPolicy: 'cache-first',
-    notifyOnNetworkStatusChange: false
   })
 
-  const items = React.useMemo(() => data?.allCasinoStories ?? data?.allCasinos ?? [], [data]);
+  const stories = useQuery(GET_CASINO_STORIES, {
+    skip: baseSkip || !isStories,
+    variables,
+    errorPolicy: 'all',
+  })
 
-  React.useEffect(() => {
-    if (shouldSkip) {
-      setLoading(false)
-      setCasinos([])
-      setError(null)
+  const active = isStories ? stories : regular
+  const items = useMemo(
+    () =>
+      isStories
+        ? stories.data?.allCasinoStories ?? []
+        : regular.data?.allCasinos ?? [],
+    [isStories, stories.data, regular.data],
+  )
+
+  useEffect(() => {
+    if (!baseSkip) {
+      setLoading(active.loading)
     } else {
-      setLoading(loading)
+      setLoading(false)
     }
-  }, [loading, setLoading, setCasinos, setError, shouldSkip])
+  }, [active.loading, setLoading, baseSkip])
 
-  React.useEffect(() => {
-    if (data && !shouldSkip) {
+  useEffect(() => {
+    if (!baseSkip && active.data) {
       setCasinos(items)
+    } else if (baseSkip) {
+      setCasinos([])
     }
-  }, [data, setCasinos, shouldSkip, items])
+  }, [active.data, setCasinos, baseSkip, items])
 
-  React.useEffect(() => {
-    if (error && !shouldSkip) {
-      setError(error.message)
-      handleGraphQLError(error, 'Casinos')
+  useEffect(() => {
+    if (active.error && !baseSkip) {
+      setError(active.error.message)
+      handleGraphQLError(active.error, 'Casinos')
     }
-  }, [error, setError, shouldSkip])
+  }, [active.error, setError, baseSkip])
 
   return {
-    casinos: shouldSkip ? [] : items,
-    loading: shouldSkip ? false : loading,
-    error,
-    refetch,
+    casinos: baseSkip ? [] : items,
+    loading: baseSkip ? false : active.loading,
+    error: active.error,
+    refetch: active.refetch,
   }
 }

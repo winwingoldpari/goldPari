@@ -74,7 +74,7 @@ export const loadImage = async (url: string): Promise<HTMLImageElement> => {
     const optimizedUrl = createDatoCMSImageUrl(url);
     
     return await loadImageViaFetch(optimizedUrl);
-  } catch (error) {
+  } catch {
     console.warn('Optimized URL failed, trying original:', url);
     
     try {

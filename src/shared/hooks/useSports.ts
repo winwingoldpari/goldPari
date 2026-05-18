@@ -1,95 +1,83 @@
-import React from 'react'
+import { useEffect, useMemo } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { GET_SPORTS, GET_SPORT_STORIES } from '@/shared/lib/graphql/queries'
 import { useAppStore } from '@/shared/store'
 import { handleGraphQLError } from '@/shared/lib/toast'
+import { getUploadDateRange } from '@/shared/lib/upload-date'
 
-interface Sport {
-  id: string;
-  title: string;
-  description?: string;
-  image?: {
-    url: string;
-    alt?: string;
-    responsiveImage?: {
-      width: number;
-      height: number;
-    };
-  };
-  category?: {
-    id: string;
-    title: string;
-  };
-  date?: string;
-  link?: string;
-  sportType?: {
-    id: string;
-    title: string;
-  };
-  loc?: {
-    id: string;
-    title: string;
-  };
-}
+export function useSports(enabled: boolean = true) {
+  const { setSports, setLoading, setError, selectedSportType, selectedCategorySport, selectedLocation, selectedFormat, selectedUploadDate } = useAppStore()
 
-interface GetSportsResponse {
-  allSports?: Sport[];
-  allSportStories?: Sport[];
-}
-
-export function useSports() {
-  const { setSports, setLoading, setError, selectedSportType, selectedCategory, selectedLocation, selectedFormat } = useAppStore()
-  
-  const shouldSkip =
+  const baseSkip =
+    !enabled ||
     !selectedFormat ||
+    !selectedSportType ||
     selectedSportType.length === 0 ||
-    selectedCategory.length === 0 ||
+    !selectedCategorySport ||
+    selectedCategorySport.length === 0 ||
     !selectedLocation
 
-  const sportsQuery = selectedFormat === 'stories' ? GET_SPORT_STORIES : GET_SPORTS;
-  
-  const { data, loading, error, refetch } = useQuery<GetSportsResponse>(sportsQuery, {
-    skip: shouldSkip,
-    variables: {
-      sportType: selectedSportType.length > 0 ? selectedSportType : undefined,
-      categorySport: selectedCategory.length > 0 ? selectedCategory : undefined,
-      location: selectedLocation || undefined,
-      first: 500
-    },
+  const isStories = selectedFormat === 'stories'
+
+  const dateRange = useMemo(() => getUploadDateRange(selectedUploadDate), [selectedUploadDate])
+
+  const variables = {
+    sportType: selectedSportType && selectedSportType.length > 0 ? selectedSportType : undefined,
+    categorySport: selectedCategorySport && selectedCategorySport.length > 0 ? selectedCategorySport : undefined,
+    location: selectedLocation ?? undefined,
+    publishedAtGte: dateRange.publishedAtGte,
+    publishedAtLt: dateRange.publishedAtLt,
+    first: 500,
+  }
+
+  const regular = useQuery(GET_SPORTS, {
+    skip: baseSkip || isStories,
+    variables,
     errorPolicy: 'all',
-    fetchPolicy: 'cache-first',
-    notifyOnNetworkStatusChange: false
   })
 
-  const items = React.useMemo(() => data?.allSportStories ?? data?.allSports ?? [], [data]);
+  const stories = useQuery(GET_SPORT_STORIES, {
+    skip: baseSkip || !isStories,
+    variables,
+    errorPolicy: 'all',
+  })
 
-  React.useEffect(() => {
-    if (shouldSkip) {
-      setLoading(false)
-      setSports([])
-      setError(null)
+  const active = isStories ? stories : regular
+  const items = useMemo(
+    () =>
+      isStories
+        ? stories.data?.allSportStories ?? []
+        : regular.data?.allSports ?? [],
+    [isStories, stories.data, regular.data],
+  )
+
+  useEffect(() => {
+    if (!baseSkip) {
+      setLoading(active.loading)
     } else {
-      setLoading(loading)
+      setLoading(false)
     }
-  }, [loading, setLoading, setSports, setError, shouldSkip])
+  }, [active.loading, setLoading, baseSkip])
 
-  React.useEffect(() => {
-    if (data && !shouldSkip) {
+  useEffect(() => {
+    if (!baseSkip && active.data) {
       setSports(items)
+    } else if (baseSkip) {
+      setSports([])
     }
-  }, [data, setSports, shouldSkip, items])
+  }, [active.data, setSports, baseSkip, items])
 
-  React.useEffect(() => {
-    if (error && !shouldSkip) {
-      setError(error.message)
-      handleGraphQLError(error, 'Sports')
+  useEffect(() => {
+    if (active.error && !baseSkip) {
+      setError(active.error.message)
+      handleGraphQLError(active.error, 'Sports')
     }
-  }, [error, setError, shouldSkip])
+  }, [active.error, setError, baseSkip])
 
   return {
-    sports: shouldSkip ? [] : items,
-    loading: shouldSkip ? false : loading,
-    error,
-    refetch,
+    sports: baseSkip ? [] : items,
+    loading: baseSkip ? false : active.loading,
+    error: active.error,
+    refetch: active.refetch,
   }
 }

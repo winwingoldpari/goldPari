@@ -1,29 +1,31 @@
-import { useState } from "react";
-import { Chip, type ChipValue } from "../chip/Chip";
+import { useState } from 'react';
+import { Chip, type ChipValue } from '../chip/Chip';
+import { CustomSelect } from '../custom-select/CustomSelect';
 
 type SelectionMode = 'single' | 'multiple';
 
-interface ChipsGroupOption {
+interface ChipsGroupOption<V extends ChipValue> {
   label: string;
-  value: ChipValue;
+  value: V;
   disabled?: boolean;
 }
 
-interface ChipsGroupProps {
+interface ChipsGroupProps<V extends ChipValue> {
   label?: string;
-  options: ChipsGroupOption[];
+  mobileLabel?: string;
+  options: ReadonlyArray<ChipsGroupOption<V>>;
   mode?: SelectionMode;
-  value?: ChipValue | ChipValue[] | null;
-
-  defaultValue?: ChipValue | ChipValue[] | null;
-  onChange?: (value: ChipValue | ChipValue[] | null) => void;
+  value?: V | V[] | null;
+  defaultValue?: V | V[] | null;
+  onChange?: (value: V | V[] | null) => void;
   allowEmpty?: boolean;
   className?: string;
   chipClassName?: string;
 }
 
-export const ChipsGroup = ({
+export const ChipsGroup = <V extends ChipValue>({
   label,
+  mobileLabel,
   options,
   mode = 'multiple',
   value,
@@ -32,31 +34,33 @@ export const ChipsGroup = ({
   allowEmpty = true,
   className = '',
   chipClassName = '',
-}: ChipsGroupProps) => {
+}: ChipsGroupProps<V>) => {
   const isControlled = typeof value !== 'undefined';
 
-  const [internal, setInternal] = useState<ChipValue | ChipValue[] | null>(
-    defaultValue ?? (mode === 'multiple' ? [] : null)
+  const [internal, setInternal] = useState<V | V[] | null>(
+    defaultValue ?? (mode === 'multiple' ? ([] as V[]) : null),
   );
 
-  const current: ChipValue | ChipValue[] | null = isControlled
-    ? value!
-    : internal;
+  const current: V | V[] | null = isControlled ? (value as V | V[] | null) : internal;
 
-  const isActive = (v: ChipValue) =>
+  const isActive = (v: V) =>
     mode === 'multiple'
       ? Array.isArray(current) && current.includes(v)
       : current === v;
 
-  const setCurrent = (next: ChipValue | ChipValue[] | null) => {
+  const setCurrent = (next: V | V[] | null) => {
     if (!isControlled) setInternal(next);
     onChange?.(next);
   };
 
-  const toggle = (v: ChipValue) => {
+  const toggle = (v: V) => {
     if (mode === 'multiple') {
-      const set = new Set(Array.isArray(current) ? current : []);
-      set.has(v) ? set.delete(v) : set.add(v);
+      const set = new Set<V>(Array.isArray(current) ? current : []);
+      if (set.has(v)) {
+        set.delete(v);
+      } else {
+        set.add(v);
+      }
       setCurrent(Array.from(set));
     } else {
       if (current === v) {
@@ -69,8 +73,14 @@ export const ChipsGroup = ({
 
   return (
     <div role="group" className={`flex flex-col gap-4 ${className}`}>
-      {label && <div className="2xl:text-[28px] text-[22px] text-white font-medium leading-[100%]">{label}</div>}
-      <div className="flex flex-wrap gap-4">
+      {label && (
+        <div className="hidden md:block 2xl:text-[28px] text-[22px] text-white font-medium leading-[100%]">
+          {label}
+        </div>
+      )}
+
+      {/* Desktop: chips */}
+      <div className="hidden md:flex flex-wrap xl:gap-6 gap-4">
         {options.map((opt) => (
           <Chip
             key={String(opt.value)}
@@ -82,6 +92,18 @@ export const ChipsGroup = ({
             className={chipClassName}
           />
         ))}
+      </div>
+
+      {/* Mobile: dropdown */}
+      <div className="md:hidden">
+        <CustomSelect<V>
+          options={options}
+          mode={mode}
+          value={current}
+          onChange={setCurrent}
+          placeholder={mobileLabel ?? label ?? 'Select'}
+          allowEmpty={allowEmpty}
+        />
       </div>
     </div>
   );

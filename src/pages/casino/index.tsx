@@ -1,7 +1,7 @@
-import { Container, Title, Button } from "@/shared/ui";
+import { Container, Loading, Title, Button } from "@/shared/ui";
 import { CardInfo } from "./ui/CardInfo";
 import IconArrow from "@/shared/assets/icons/arrow-right.svg?react";
-import { Loading, Result } from "@/entities/result";
+import { Result } from "@/entities/result";
 import { useCasinos } from "@/shared/hooks";
 import { useState } from "react";
 import { BgRound } from "@/shared/ui/bg-round/bg-round";

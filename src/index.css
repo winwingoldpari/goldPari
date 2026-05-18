@@ -24,6 +24,9 @@
   --color-surface: #0b1220;
   --color-foreground: #e5e7eb;
   --color-divider: #ffffff1a;
+
+  --breakpoint-xl: 90rem;   /* 1440px */
+  --breakpoint-2xl: 120rem; /* 1920px */
 }
 
 :root {
@@ -47,7 +50,7 @@ a {
 
 body {
   margin: 0;
-  min-width: 360px;
+  min-width: 320px;
   min-height: 100vh;
 }
 

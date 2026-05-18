@@ -1,0 +1,6 @@
+export const BASE_SIZE = 1080;
+export const STORIES_HEIGHT_BASE = 1920;
+export const MAX_EXPORT_RATIO = 12;
+
+export const STORIES_ASPECT_RATIO = STORIES_HEIGHT_BASE / BASE_SIZE;
+export const STORIES_ASPECT_TOLERANCE = 0.05;

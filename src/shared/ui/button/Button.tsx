@@ -44,14 +44,14 @@ function getClassName({
 }: Pick<ButtonBaseProps, 'fullWidth' | 'variant' | 'className'> & { hasIcon?: boolean }) {
   const variantClasses =
     variant === 'secondary'
-      ? 'bg-black-100 text-white border border-[#969696] px-5'
+      ? 'bg-black-100 text-white border border-[#969696] md:px-3 px-1.5'
       : 'bg-[linear-gradient(212deg,#f3b809_0%,#fdd047_45.19%,#f3b809_100%)] hover:bg-[linear-gradient(212deg,#ffd75f_0%,#ffdc72_45.19%,#ffd75f_100%)] text-black';
 
-  const pyClasses = hasIcon ? '2xl:py-2.5 py-2.5' : '2xl:py-[13px] py-[13px]';
+  const pyClasses = hasIcon ? 'xl:py-[12px] md:py-2.5 py-[7px]' : 'xl:py-[15px] md:py-3 py-2';
 
   const classes = [
-    'inline-flex select-none items-center justify-center gap-2 rounded-[12px] relative',
-    'md:px-5 px-4 font-[700] uppercase 2xl:text-[20px] text-sx leading-[1]',
+    'inline-flex select-none items-center justify-center md:gap-2 gap-1.5 md:rounded-[12px] rounded-[7px] relative',
+    'xl:px-3 px-2.5 font-bold uppercase xl:text-[20px] md:text-[14px] text-[12px] leading-[1]',
     pyClasses,
     variantClasses,
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-300',
@@ -64,7 +64,7 @@ function getClassName({
 
 const renderIcon = (icon?: ReactNode): ReactElement | null => {
   if (!icon) return null;
-  return <span aria-hidden className="flex items-center justify-center text-base">{icon}</span>;
+  return <span aria-hidden className="flex items-center justify-center text-base pointer-events-none">{icon}</span>;
 };
 
 function isInternalHref(href: string) {

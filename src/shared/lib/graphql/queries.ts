@@ -1,10 +1,15 @@
-import { gql } from '@apollo/client'
+import { graphql } from './__generated__'
 
-export const GET_CASINOS = gql`
-  query GetCasinos($category: [ItemId!], $location: ItemId, $first: IntType) {
-    allCasinos(filter: {category: {in: $category}, loc: {eq: $location}}, first: $first) {
+export const GET_CASINOS = graphql(`
+  query GetCasinos($category: [ItemId!], $casinoType: [ItemId!], $location: ItemId, $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
+    allCasinos(filter: {category: {in: $category}, categoryType: {in: $casinoType}, loc: {eq: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
       id
       title
+      _publishedAt
+      category {
+        id
+        title
+      }
       image {
         url
         alt
@@ -15,13 +20,18 @@ export const GET_CASINOS = gql`
       }
     }
   }
-`
+`)
 
-export const GET_CASINO_STORIES = gql`
-  query GetCasinoStories($category: [ItemId!], $location: ItemId, $first: IntType) {
-    allCasinoStories(filter: {category: {in: $category}, loc: {eq: $location}}, first: $first) {
+export const GET_CASINO_STORIES = graphql(`
+  query GetCasinoStories($category: [ItemId!], $casinoType: [ItemId!], $location: ItemId, $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
+    allCasinoStories(filter: {category: {in: $category}, categoryType: {in: $casinoType}, loc: {eq: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
       id
       title
+      _publishedAt
+      category {
+        id
+        title
+      }
       image {
         url
         alt
@@ -32,33 +42,18 @@ export const GET_CASINO_STORIES = gql`
       }
     }
   }
-`
+`)
 
-export const GET_CASINO_BY_ID = gql`
-  query GetCasinoById($id: ItemId!) {
-    casino(filter: { id: { eq: $id } }) {
+export const GET_SPORTS = graphql(`
+  query GetSports($sportType: [ItemId!], $categorySport: [ItemId!], $location: ItemId, $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
+    allSports(filter: {sportType: {in: $sportType}, category: {in: $categorySport}, location: {eq: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
       id
       title
-      description
-      image {
-        url
-        alt
+      _publishedAt
+      category {
+        id
+        title
       }
-      rating
-      bonus
-      link
-      features
-      createdAt
-      updatedAt
-    }
-  }
-`
-
-export const GET_SPORTS = gql`
-  query GetSports($sportType: [ItemId!], $categorySport: [ItemId!], $location: ItemId, $first: IntType) {
-    allSports(filter: {sportType: {in: $sportType}, category: {in: $categorySport}, location: {eq: $location}}, first: $first) {
-      id
-      title
       image {
         url
         alt
@@ -67,19 +62,23 @@ export const GET_SPORTS = gql`
           height
         }
       }
-
     }
   }
-`
+`)
 
-export const GET_SPORT_STORIES = gql`
-  query GetSportStories($sportType: [ItemId!], $categorySport: [ItemId!], $location: ItemId, $first: IntType) {
+export const GET_SPORT_STORIES = graphql(`
+  query GetSportStories($sportType: [ItemId!], $categorySport: [ItemId!], $location: ItemId, $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
     allSportStories(
-      filter: {sportType: {in: $sportType}, category: {in: $categorySport}, location: {eq: $location}}
+      filter: {sportType: {in: $sportType}, category: {in: $categorySport}, location: {eq: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}
       first: $first
     ) {
       id
       title
+      _publishedAt
+      category {
+        id
+        title
+      }
       image {
         url
         alt
@@ -90,30 +89,9 @@ export const GET_SPORT_STORIES = gql`
       }
     }
   }
-`
+`)
 
-export const GET_SPORT_BY_ID = gql`
-  query GetSportById($id: ItemId!) {
-    sport(filter: { id: { eq: $id } }) {
-      id
-      title
-      description
-      image {
-        url
-        alt
-      }
-      category
-      date
-      link
-      details
-      createdAt
-      updatedAt
-    }
-  }
-`
-
-// Запрос для получения фильтров
-export const GET_FILTERS = gql`
+export const GET_FILTERS = graphql(`
   query GetFilters {
     allCategories(first: 100) {
       title
@@ -131,14 +109,50 @@ export const GET_FILTERS = gql`
       id
       title
     }
+    allCreativeFormats(first: 100) {
+      id
+      title
+    }
+    allUniversalCategories(first: 100) {
+      id
+      title
+    }
+    allCasinoTypes(first: 100) {
+      id
+      title
+    }
   }
-`
+`)
 
-export const GET_GLOBAL_SETTINGS = gql`
+export const GET_GLOBAL_SETTINGS = graphql(`
   query GetGlobalSettings {
     globalSetting {
       starterPack
       feedback
+      link
+      sendRequest
     }
   }
-`
+`)
+
+export const GET_UNIVERSALS = graphql(`
+  query GetUniversals($universalCategory: [ItemId!], $creativeFormat: [ItemId!], $location: ItemId, $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
+    allUniversals(filter: {category: {in: $universalCategory}, format: {in: $creativeFormat}, local: {eq: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
+      id
+      title
+      _publishedAt
+      category {
+        id
+        title
+      }
+      image {
+        url
+        alt
+        responsiveImage {
+          width
+          height
+        }
+      }
+    }
+  }
+`)

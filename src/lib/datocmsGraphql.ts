@@ -9,9 +9,7 @@ export type DatoGraphqlClientOptions = {
 }
 
 export function createDatoGraphqlClient(options?: DatoGraphqlClientOptions): AxiosInstance {
-  const token = (options?.apiToken ?? (import.meta as any).env?.VITE_DATOCMS_API_TOKEN) as
-    | string
-    | undefined
+  const token = options?.apiToken ?? import.meta.env.VITE_DATOCMS_API_TOKEN
 
   if (!token) {
     throw new Error('Missing VITE_DATOCMS_API_TOKEN in env')

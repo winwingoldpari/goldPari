@@ -6,7 +6,7 @@ import { useFilters } from '@/shared/hooks';
 import type { CardInfoViewProps, FilterItem, MultiSelectValue, SelectOption, SingleSelectValue } from '../model/types';
 
 const toOptions = (items: FilterItem[]): SelectOption[] =>
-  items.map((item) => ({ label: item.title, value: item.id }));
+  items.map((item) => ({ label: item.title ?? '', value: item.id }));
 
 const FORMAT_OPTIONS: SelectOption[] = [
   { label: 'Square', value: 'square' },
@@ -74,7 +74,9 @@ const CardInfoView = ({
         options={locationOptions}
         placeholder="Select"
         value={selectedLocation}
-        onChange={onLocationChange}
+        onChange={(value) =>
+          onLocationChange(value === null ? null : Array.isArray(value) ? value[0] ?? null : value)
+        }
       />
       <div className="flex flex-col gap-4">
         <div className="2xl:text-[28px] text-[22px] text-white font-medium leading-[100%]">Enter the promocode</div>

@@ -13,6 +13,9 @@ dist-ssr
 *.local
 .env
 
+# GraphQL codegen output (regenerated via `npm run codegen`)
+src/shared/lib/graphql/__generated__
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

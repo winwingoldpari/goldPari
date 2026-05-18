@@ -31,7 +31,7 @@ export const Input = ({
 
   return (
     <div className={fullWidth ? 'w-full' : ''}>
-      <div className={`inline-flex w-full items-start rounded-[30px] border-2 border-yellow-100 bg-black-100 px-6 py-2.5 ${className}`}>
+      <div className={`inline-flex w-full items-start rounded-[30px] border-2 border-yellow-100 bg-black-100 px-6 md:py-1 py-1.5 ${className}`}>
         <textarea
           {...props}
           ref={textareaRef}
@@ -42,7 +42,7 @@ export const Input = ({
             resize();
             onInput?.(event);
           }}
-          className="w-full bg-transparent text-white font-medium placeholder-[rgba(255, 255, 255, 0.5)] text-lg leading-[1.2] outline-none resize-none"
+          className="w-full bg-transparent text-white font-medium placeholder-[rgba(255, 255, 255, 0.5)] md:text-lg text-[12px] placeholder:md:text-lg placeholder:text-[12px] leading-[1.2] outline-none resize-none"
         />
       </div>
     </div>

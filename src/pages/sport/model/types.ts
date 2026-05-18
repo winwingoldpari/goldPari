@@ -1,5 +1,5 @@
 export type SelectOption = { label: string; value: string };
-export type FilterItem = { id: string; title: string };
+export type FilterItem = { id: string; title?: string | null };
 
 export type MultiSelectValue = string | number | Array<string | number> | null;
 export type SingleSelectValue = string | number | null;

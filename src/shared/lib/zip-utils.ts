@@ -3,32 +3,53 @@
  */
 
 import JSZip from 'jszip';
-import { BASE_SIZE, createDataURL, calculatePromoDimensions } from './konva-utils';
+import type Konva from 'konva';
+import {
+  applyMobcashOverlayToStage,
+  applyPromoCodeToStage,
+  BASE_SIZE,
+  captureOriginalMobcash,
+  createDataURL,
+} from './konva';
+import { findMobcashEntry } from './mobcash';
+import { useAppStore } from '@/shared/store/app-store';
 import { handleDownloadError, showSuccess } from './toast';
+
+type BannerKind = 'casino' | 'sport' | 'universal';
+
+const KIND_FOLDER: Record<BannerKind, string> = {
+  casino: 'Casino',
+  sport: 'Sport',
+  universal: 'Universal',
+};
 
 interface BannerItem {
   id: string;
-  title: string;
+  title?: string | null;
+  kind?: BannerKind;
   image?: {
     responsiveImage?: {
       width: number;
       height: number;
-    };
-  };
+    } | null;
+  } | null;
 }
 
-/**
- * Создает ZIP архив со всеми баннерами
- */
 export const createBannersZip = async (
   data: BannerItem[],
-  stageRefs: { [key: string]: any },
+  stageRefs: Record<string, Konva.Stage>,
   promoCodes: string[] = []
 ): Promise<void> => {
   if (data.length === 0) return;
 
   const zip = new JSZip();
   const codes = promoCodes.length > 0 ? promoCodes : [''];
+
+  const { mobcashEntries } = useAppStore.getState();
+
+  // Determine if we should prefix files with mode folders.
+  const distinctKinds = new Set(data.map((d) => d.kind).filter((k): k is BannerKind => Boolean(k)));
+  const useFolders = distinctKinds.size >= 2;
 
   try {
     const promises = data.map(async (item, index) => {
@@ -39,48 +60,27 @@ export const createBannersZip = async (
       const fallback = BASE_SIZE;
       const targetW = propW ?? fallback;
       const pixelRatio = Math.max(1, Math.min(16, targetW / stageRef.width()));
-      const stageWidth = stageRef.width();
-      const stageHeight = stageRef.height();
-      const { bottomPad } = calculatePromoDimensions(stageWidth, stageHeight);
-      const promoNode = stageRef.findOne?.('.promo-text');
-      const original = promoNode
-        ? {
-            text: promoNode.text(),
-            offsetX: promoNode.offsetX(),
-            y: promoNode.y(),
-            visible: promoNode.visible(),
-          }
-        : null;
+      const promoNode = stageRef.findOne<Konva.Text>('.promo-text');
+      const originalText = promoNode?.text() ?? '';
+      const originalMobcash = captureOriginalMobcash(stageRef);
 
-      const titleSafe = item.title.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40) || 'banner';
+      const titleSafe = (item.title ?? '').replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40) || 'banner';
+      const folderPrefix = useFolders && item.kind ? `${KIND_FOLDER[item.kind]}/` : '';
 
       codes.forEach((code, codeIndex) => {
-        if (promoNode) {
-          const nextText = code ?? '';
-          promoNode.text(nextText);
-          const w = promoNode.width();
-          const h = promoNode.height();
-          promoNode.offsetX(w / 2);
-          promoNode.y(stageHeight - bottomPad - h);
-          promoNode.visible(Boolean(nextText));
-          promoNode.getLayer()?.batchDraw();
-        }
+        applyPromoCodeToStage(stageRef, code);
+        applyMobcashOverlayToStage(stageRef, findMobcashEntry(code, mobcashEntries));
 
         const dataURL = createDataURL(stageRef, pixelRatio);
         const base64Data = dataURL.split(',')[1];
         const codeSafe = code ? code.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40) : '';
         const codePart = codeSafe ? `_${codeSafe}` : '';
-        const fileName = `${titleSafe}_${index + 1}-${codeIndex + 1}${codePart}.png`;
+        const fileName = `${folderPrefix}${titleSafe}_${index + 1}-${codeIndex + 1}${codePart}.png`;
         zip.file(fileName, base64Data, { base64: true });
       });
 
-      if (promoNode && original) {
-        promoNode.text(original.text);
-        promoNode.offsetX(original.offsetX);
-        promoNode.y(original.y);
-        promoNode.visible(original.visible);
-        promoNode.getLayer()?.batchDraw();
-      }
+      applyPromoCodeToStage(stageRef, originalText);
+      applyMobcashOverlayToStage(stageRef, originalMobcash);
     });
 
     await Promise.all(promises);

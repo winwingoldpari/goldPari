@@ -7,9 +7,7 @@ export type BuildDatoCmaClientOptions = {
 }
 
 export function buildDatoCmaClient(options?: BuildDatoCmaClientOptions) {
-  const token = (options?.apiToken ?? (import.meta as any).env?.VITE_DATOCMS_CMA_TOKEN) as
-    | string
-    | undefined
+  const token = options?.apiToken ?? import.meta.env.VITE_DATOCMS_CMA_TOKEN
 
   if (!token) {
     throw new Error(
