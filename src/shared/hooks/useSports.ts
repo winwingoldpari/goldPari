@@ -24,7 +24,7 @@ export function useSports(enabled: boolean = true) {
   const variables = {
     sportType: selectedSportType && selectedSportType.length > 0 ? selectedSportType : undefined,
     categorySport: selectedCategorySport && selectedCategorySport.length > 0 ? selectedCategorySport : undefined,
-    location: selectedLocation ?? undefined,
+    location: selectedLocation ? [selectedLocation] : undefined,
     publishedAtGte: dateRange.publishedAtGte,
     publishedAtLt: dateRange.publishedAtLt,
     first: 500,

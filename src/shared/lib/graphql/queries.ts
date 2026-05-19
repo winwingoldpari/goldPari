@@ -1,8 +1,8 @@
 import { graphql } from './__generated__'
 
 export const GET_CASINOS = graphql(`
-  query GetCasinos($category: [ItemId!], $casinoType: [ItemId!], $location: ItemId, $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
-    allCasinos(filter: {category: {in: $category}, categoryType: {in: $casinoType}, loc: {eq: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
+  query GetCasinos($category: [ItemId!], $casinoType: [ItemId!], $location: [ItemId!], $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
+    allCasinos(filter: {category: {in: $category}, categoryType: {in: $casinoType}, loc: {anyIn: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
       id
       title
       _publishedAt
@@ -23,8 +23,8 @@ export const GET_CASINOS = graphql(`
 `)
 
 export const GET_CASINO_STORIES = graphql(`
-  query GetCasinoStories($category: [ItemId!], $casinoType: [ItemId!], $location: ItemId, $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
-    allCasinoStories(filter: {category: {in: $category}, categoryType: {in: $casinoType}, loc: {eq: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
+  query GetCasinoStories($category: [ItemId!], $casinoType: [ItemId!], $location: [ItemId!], $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
+    allCasinoStories(filter: {category: {in: $category}, categoryType: {in: $casinoType}, loc: {anyIn: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
       id
       title
       _publishedAt
@@ -45,8 +45,8 @@ export const GET_CASINO_STORIES = graphql(`
 `)
 
 export const GET_SPORTS = graphql(`
-  query GetSports($sportType: [ItemId!], $categorySport: [ItemId!], $location: ItemId, $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
-    allSports(filter: {sportType: {in: $sportType}, category: {in: $categorySport}, location: {eq: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
+  query GetSports($sportType: [ItemId!], $categorySport: [ItemId!], $location: [ItemId!], $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
+    allSports(filter: {sportType: {in: $sportType}, category: {in: $categorySport}, location: {anyIn: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
       id
       title
       _publishedAt
@@ -67,9 +67,9 @@ export const GET_SPORTS = graphql(`
 `)
 
 export const GET_SPORT_STORIES = graphql(`
-  query GetSportStories($sportType: [ItemId!], $categorySport: [ItemId!], $location: ItemId, $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
+  query GetSportStories($sportType: [ItemId!], $categorySport: [ItemId!], $location: [ItemId!], $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
     allSportStories(
-      filter: {sportType: {in: $sportType}, category: {in: $categorySport}, location: {eq: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}
+      filter: {sportType: {in: $sportType}, category: {in: $categorySport}, location: {anyIn: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}
       first: $first
     ) {
       id
@@ -136,8 +136,8 @@ export const GET_GLOBAL_SETTINGS = graphql(`
 `)
 
 export const GET_UNIVERSALS = graphql(`
-  query GetUniversals($universalCategory: [ItemId!], $creativeFormat: [ItemId!], $location: ItemId, $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
-    allUniversals(filter: {category: {in: $universalCategory}, format: {in: $creativeFormat}, local: {eq: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
+  query GetUniversals($universalCategory: [ItemId!], $creativeFormat: [ItemId!], $location: [ItemId!], $publishedAtGte: DateTime, $publishedAtLt: DateTime, $first: IntType) {
+    allUniversals(filter: {category: {in: $universalCategory}, format: {in: $creativeFormat}, local: {anyIn: $location}, _publishedAt: {gte: $publishedAtGte, lt: $publishedAtLt}}, first: $first) {
       id
       title
       _publishedAt

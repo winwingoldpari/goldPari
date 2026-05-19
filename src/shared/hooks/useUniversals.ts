@@ -27,7 +27,7 @@ export function useUniversals(enabled: boolean = true) {
   const variables = {
     universalCategory: selectedUniversalCategory && selectedUniversalCategory.length > 0 ? selectedUniversalCategory : undefined,
     creativeFormat: selectedCreativeFormat && selectedCreativeFormat.length > 0 ? selectedCreativeFormat : undefined,
-    location: selectedLocation ?? undefined,
+    location: selectedLocation ? [selectedLocation] : undefined,
     publishedAtGte: dateRange.publishedAtGte,
     publishedAtLt: dateRange.publishedAtLt,
     first: 500,

@@ -22,7 +22,7 @@ export function useCasinos(enabled: boolean = true) {
   const variables = {
     category: selectedCategory && selectedCategory.length > 0 ? selectedCategory : undefined,
     casinoType: selectedCasinoType && selectedCasinoType.length > 0 ? selectedCasinoType : undefined,
-    location: selectedLocation ?? undefined,
+    location: selectedLocation ? [selectedLocation] : undefined,
     publishedAtGte: dateRange.publishedAtGte,
     publishedAtLt: dateRange.publishedAtLt,
     first: 500,
