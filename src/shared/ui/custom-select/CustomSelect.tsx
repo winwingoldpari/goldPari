@@ -25,6 +25,8 @@ interface CustomSelectProps<V extends SelectValue> {
   className?: string;
   triggerClassName?: string;
   menuClassName?: string;
+  searchable?: boolean;
+  searchPlaceholder?: string;
 }
 
 export const CustomSelect = <V extends SelectValue>({
@@ -42,6 +44,8 @@ export const CustomSelect = <V extends SelectValue>({
   className = '',
   triggerClassName = '',
   menuClassName = '',
+  searchable = false,
+  searchPlaceholder = 'Search...',
 }: CustomSelectProps<V>) => {
   const maxWidthStyle =
     typeof maxWidth === 'number' ? { maxWidth: `${maxWidth}px` } : undefined;
@@ -81,6 +85,7 @@ export const CustomSelect = <V extends SelectValue>({
   };
 
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -91,6 +96,14 @@ export const CustomSelect = <V extends SelectValue>({
     document.addEventListener('mousedown', onDoc);
     return () => document.removeEventListener('mousedown', onDoc);
   }, []);
+
+  useEffect(() => {
+    if (!open) setQuery('');
+  }, [open]);
+
+  const visibleOptions = searchable && query.trim() !== ''
+    ? options.filter((o) => o.label.toLowerCase().includes(query.trim().toLowerCase()))
+    : options;
 
   const selectedLabels = (() => {
     if (mode === 'multiple') {
@@ -145,37 +158,50 @@ export const CustomSelect = <V extends SelectValue>({
 
         {open && (
           <div
-            role="listbox"
-            className={`absolute z-20 mt-2 w-full bg-black-100 border border-gray-100 rounded-2xl shadow-xl md:max-h-[240px] max-h-[200px] overflow-y-auto py-2 ${menuClassName}`}
+            className={`absolute z-20 mt-2 w-full bg-black-100 border border-gray-100 rounded-2xl shadow-xl flex flex-col ${menuClassName}`}
             style={maxWidthStyle}
           >
-            {options.length === 0 && (
-              <div className="px-4 py-2 md:text-xl text-base leading-none text-white/70">
-                Not found
+            {searchable && (
+              <div className="p-2 border-b border-gray-100">
+                <input
+                  type="text"
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={searchPlaceholder}
+                  className="w-full bg-transparent text-white placeholder-white/50 outline-none md:text-lg text-base px-3 py-1.5"
+                />
               </div>
             )}
+            <div role="listbox" className="md:max-h-[240px] max-h-[200px] overflow-y-auto py-2">
+              {visibleOptions.length === 0 && (
+                <div className="px-4 py-2 md:text-xl text-base leading-none text-white/70">
+                  Not found
+                </div>
+              )}
 
-            {options.map((opt) => {
-              const active = isActive(opt.value);
-              return (
-                <button
-                  type="button"
-                  key={String(opt.value)}
-                  role="option"
-                  aria-selected={active}
-                  disabled={opt.disabled}
-                  onClick={() => {
-                    toggle(opt.value);
-                    if (mode === 'single') setOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-2 md:text-xl text-base leading-none transition-colors ${
-                    active ? 'bg-yellow-100 text-black' : 'text-white hover:bg-[#686868]'
-                  } ${opt.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  {opt.label}
-                </button>
-              );
-            })}
+              {visibleOptions.map((opt) => {
+                const active = isActive(opt.value);
+                return (
+                  <button
+                    type="button"
+                    key={String(opt.value)}
+                    role="option"
+                    aria-selected={active}
+                    disabled={opt.disabled}
+                    onClick={() => {
+                      toggle(opt.value);
+                      if (mode === 'single') setOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 md:text-xl text-base leading-none transition-colors ${
+                      active ? 'bg-yellow-100 text-black' : 'text-white hover:bg-[#686868]'
+                    } ${opt.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>

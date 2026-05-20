@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ChipsGroup, CustomSelect } from '@/shared/ui';
 import { useFilters } from '@/shared/hooks';
 import { UPLOAD_DATE_OPTIONS } from '@/shared/lib/upload-date';
+import { sortLanguageOptions } from '@/shared/lib/language-sort';
 import type { Mode } from '../model/types';
 import { ModeTabs } from './ModeTabs';
 import { PromocodeBlock } from './PromocodeBlock';
@@ -83,7 +84,7 @@ export const HomeFilterPanel = ({
   const showUniversal = modes.includes('universal');
 
   const locationOptions = useMemo(
-    () => locations.map((l) => ({ label: l.title ?? '', value: l.id })),
+    () => sortLanguageOptions(locations.map((l) => ({ label: l.title ?? '', value: l.id }))),
     [locations],
   );
   const creativeFormatOptions = useMemo(
@@ -259,6 +260,8 @@ export const HomeFilterPanel = ({
                 options={locationOptions}
                 placeholder="Select language"
                 value={selectedLocation}
+                searchable
+                searchPlaceholder="Search language..."
                 triggerClassName="max-w-[170px] md:max-w-[270px]"
                 menuClassName="max-w-[170px] md:max-w-[270px]"
                 onChange={(value) =>

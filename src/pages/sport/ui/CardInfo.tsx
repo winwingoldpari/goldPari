@@ -3,6 +3,7 @@ import { Input } from '@/shared/ui/input/Input';
 import { useMemo, useState } from 'react';
 import imageUrl from "@/shared/assets/ball.png";
 import { useFilters } from '@/shared/hooks';
+import { sortLanguageOptions } from '@/shared/lib/language-sort';
 import type { CardInfoViewProps, FilterItem, MultiSelectValue, SelectOption, SingleSelectValue } from '../model/types';
 
 const toOptions = (items: FilterItem[]): SelectOption[] =>
@@ -74,6 +75,8 @@ const CardInfoView = ({
         options={locationOptions}
         placeholder="Select"
         value={selectedLocation}
+        searchable
+        searchPlaceholder="Search language..."
         onChange={(value) =>
           onLocationChange(value === null ? null : Array.isArray(value) ? value[0] ?? null : value)
         }
@@ -110,7 +113,7 @@ export const CardInfo = ({ onPromocodeChange }: { onPromocodeChange: (promocode:
   const sportTypeOptions = useMemo(() => toOptions(sportTypes), [sportTypes]);
   const categoryOptions = useMemo(() => toOptions(categorySports), [categorySports]);
   const formatOptions = useMemo(() => FORMAT_OPTIONS, []);
-  const locationOptions = useMemo(() => toOptions(locations), [locations]);
+  const locationOptions = useMemo(() => sortLanguageOptions(toOptions(locations)), [locations]);
 
   const handlePromocodeChange = (value: string) => {
     setPromocode(value);
