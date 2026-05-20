@@ -26,8 +26,8 @@ export const MOBCASH_VALUE_MIN_FONT_RATIO = 0.6;
 export const MOBCASH_LABEL_LETTER_SPACING_BASE = 2;
 
 export const MOBCASH_COLOR = '#FFFFFF';
-export const MOBCASH_BOX_FILL = '#FFFFFF';
-export const MOBCASH_VALUE_TEXT_COLOR = '#1A1A1A';
+export const MOBCASH_BOX_FILL = '#ffffff';
+export const MOBCASH_VALUE_TEXT_COLOR = '#000000';
 export const MOBCASH_LABEL_FONT_FAMILY = 'Montserrat';
 export const MOBCASH_LABEL_FONT_STYLE = '500';
 export const MOBCASH_VALUE_FONT_FAMILY = 'Montserrat';

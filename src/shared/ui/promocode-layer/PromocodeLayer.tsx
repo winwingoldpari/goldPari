@@ -1,9 +1,15 @@
 import { Group, Path, Rect, Text } from 'react-konva';
 import {
+  BASE_SIZE,
   buildPromoBorderPath,
   calculatePromoLayout,
+  PROMO_LABEL_SHADOW_BLUR_BASE,
+  PROMO_LABEL_SHADOW_COLOR,
+  PROMO_LABEL_SHADOW_OFFSET_X_BASE,
+  PROMO_LABEL_SHADOW_OFFSET_Y_BASE,
+  PROMO_LABEL_SHADOW_OPACITY,
   PROMO_PILL_BORDER_COLOR,
-  PROMO_PILL_GRADIENT_STOPS,
+  PROMO_PILL_FILL_COLOR,
 } from '@/shared/lib/konva';
 
 interface PromocodeLayerProps {
@@ -28,6 +34,7 @@ export const PromocodeLayer = ({
   pillChromeHidden = false,
 }: PromocodeLayerProps) => {
   const layout = calculatePromoLayout(stageWidth, stageHeight, promocode, isMobcash, isEvents, pillChromeHidden);
+  const shadowScale = Math.max(1, stageWidth) / BASE_SIZE;
 
   return (
     <Group visible={visible}>
@@ -42,6 +49,11 @@ export const PromocodeLayer = ({
         fill={layout.labelColor}
         align="center"
         letterSpacing={layout.labelLetterSpacing}
+        shadowColor={PROMO_LABEL_SHADOW_COLOR}
+        shadowBlur={PROMO_LABEL_SHADOW_BLUR_BASE * shadowScale}
+        shadowOffsetX={PROMO_LABEL_SHADOW_OFFSET_X_BASE * shadowScale}
+        shadowOffsetY={PROMO_LABEL_SHADOW_OFFSET_Y_BASE * shadowScale}
+        shadowOpacity={PROMO_LABEL_SHADOW_OPACITY}
         visible={layout.showLabel}
       />
       <Rect
@@ -51,9 +63,7 @@ export const PromocodeLayer = ({
         width={layout.pillW}
         height={layout.pillH}
         cornerRadius={layout.cornerRadius}
-        fillLinearGradientStartPoint={{ x: 0, y: 0 }}
-        fillLinearGradientEndPoint={{ x: layout.pillW, y: 0 }}
-        fillLinearGradientColorStops={PROMO_PILL_GRADIENT_STOPS}
+        fill={PROMO_PILL_FILL_COLOR}
         stroke={layout.isStories ? PROMO_PILL_BORDER_COLOR : undefined}
         strokeWidth={layout.isStories ? layout.pillBorder : undefined}
         visible={layout.showPill}

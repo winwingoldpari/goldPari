@@ -26,10 +26,19 @@ export const STORIES_PROMO_BOTTOM_PAD_BASE = 108;
 // Colors
 export const PROMO_PILL_BORDER_COLOR = '#526a11';
 export const PROMO_PILL_GRADIENT_STOPS: (number | string)[] = [
-  0, '#A4F300',
-  0.40351, '#A4F300',
-  0.66225, '#D0FF6D',
-  0.93113, '#A4F300',
+  0, '#FFD24C',
+  0.4, '#FFD24C',
+  0.6, '#FFD24C',
+  1, '#FFD24C',
 ];
-export const PROMO_LABEL_COLOR = '#707070';
-export const STORIES_PROMO_LABEL_COLOR = '#FFFFFF';
+export const PROMO_PILL_FILL_COLOR = '#f2b705';
+export const PROMO_LABEL_COLOR = '#FFBF00';
+export const STORIES_PROMO_LABEL_COLOR = '#FFBF00';
+
+// Label text-shadow (CSS: 0 4px 4px 0 rgba(0, 0, 0, 0.45)).
+// Offsets and blur are in BASE_SIZE units; the layer scales them along with the font.
+export const PROMO_LABEL_SHADOW_COLOR = '#000000';
+export const PROMO_LABEL_SHADOW_OFFSET_X_BASE = 0;
+export const PROMO_LABEL_SHADOW_OFFSET_Y_BASE = 4;
+export const PROMO_LABEL_SHADOW_BLUR_BASE = 4;
+export const PROMO_LABEL_SHADOW_OPACITY = 0.45;

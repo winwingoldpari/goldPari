@@ -1,4 +1,11 @@
-const PRIORITY = ['english', 'french'];
+const PRIORITY = [
+  'english',
+  'english 100%',
+  'english 300%',
+  'french',
+  'french 100%',
+  'french 300%',
+];
 
 export function sortLanguageOptions<T extends { label: string }>(options: ReadonlyArray<T>): T[] {
   return [...options].sort((a, b) => {
