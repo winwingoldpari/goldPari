@@ -100,18 +100,33 @@ export const calculatePromoLayout = (
       ? [0, 0, 0, 0]
       : [pillRadius, pillRadius, 0, 0];
 
+
+  const showBack = !isEvents && !pillChromeHidden && !isSquareMobcash && pillBorder > 0;
+  const backExtendBottom = isStories;
+  const backX = pillX - pillBorder;
+  const backY = pillY - pillBorder;
+  const backW = pillW + 2 * pillBorder;
+  const backH = pillH + pillBorder + (backExtendBottom ? pillBorder : 0);
+  const backTopRadius = pillRadius + pillBorder;
+  const backBottomRadius = backExtendBottom ? pillRadius + pillBorder : 0;
+  const backCornerRadius: [number, number, number, number] = [
+    backTopRadius,
+    backTopRadius,
+    backBottomRadius,
+    backBottomRadius,
+  ];
+
   const labelFontSize = Math.max(1, labelFontBase * scale);
   const labelLetterSpacing = labelLetterSpacingBase * scale;
   const labelGap = labelGapBase * scale;
   const labelY = pillY - labelGap - labelFontSize - 2;
   const labelColor = isStories ? STORIES_PROMO_LABEL_COLOR : PROMO_LABEL_COLOR;
 
-  // Events mode: pill / border / label hidden, promo-text rendered as plain black text
+  // Events mode: pill / back / label hidden, promo-text rendered as plain black text
   // in the same x/y/width/height as the pill would have occupied.
   // pillChromeHidden mode (banners uploaded before the new-pill cutoff): same as events
-  // for pill/label/border — the bare promo text is drawn over the old baked-in pill.
+  // for pill/label/back — the bare promo text is drawn over the old baked-in pill.
   const showPill = !isEvents && !pillChromeHidden;
-  const showBorder = !isEvents && !pillChromeHidden && !isStories && !isSquareMobcash;
   const showLabel = !isEvents && !pillChromeHidden;
   const promoTextFill = isEvents || pillChromeHidden ? '#000000' : '#000';
 
@@ -132,21 +147,15 @@ export const calculatePromoLayout = (
     isEvents,
     cornerRadius,
     showPill,
-    showBorder,
     showLabel,
+    showBack,
+    backX,
+    backY,
+    backW,
+    backH,
+    backCornerRadius,
     promoTextFill,
   };
-};
-
-export const buildPromoBorderPath = (layout: {
-  pillX: number;
-  pillY: number;
-  pillW: number;
-  pillH: number;
-  pillRadius: number;
-}): string => {
-  const { pillX, pillY, pillW, pillH, pillRadius } = layout;
-  return `M ${pillX},${pillY + pillH} L ${pillX},${pillY + pillRadius} A ${pillRadius},${pillRadius} 0 0 1 ${pillX + pillRadius},${pillY} L ${pillX + pillW - pillRadius},${pillY} A ${pillRadius},${pillRadius} 0 0 1 ${pillX + pillW},${pillY + pillRadius} L ${pillX + pillW},${pillY + pillH}`;
 };
 
 export const applyPromoCodeToStage = (stage: Konva.Stage | null, code: string) => {
@@ -177,14 +186,15 @@ export const applyPromoCodeToStage = (stage: Konva.Stage | null, code: string) =
     pillNode.visible(layout.showPill);
   }
 
-  const borderNode = stage.findOne<Konva.Path>('.promo-border');
-  if (borderNode) {
-    if (!layout.showBorder) {
-      borderNode.visible(false);
-    } else {
-      borderNode.visible(true);
-      borderNode.data(buildPromoBorderPath(layout));
-    }
+  const backNode = stage.findOne<Konva.Rect>('.promo-back');
+  if (backNode) {
+    backNode.x(layout.backX);
+    backNode.y(layout.backY);
+    backNode.width(layout.backW);
+    backNode.height(layout.backH);
+    backNode.cornerRadius(layout.backCornerRadius);
+    backNode.fillLinearGradientEndPoint({ x: layout.backW, y: 0 });
+    backNode.visible(layout.showBack);
   }
 
   textNode?.getLayer()?.batchDraw();
