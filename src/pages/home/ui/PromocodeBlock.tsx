@@ -24,7 +24,7 @@ export const PromocodeBlock = ({ value, onChange, enabled, onEnabledChange }: Pr
         <Input
           placeholder="PROMOCODEXXX, SPORT123"
           value={value}
-          onChange={(e) => onChange(e.target.value.toUpperCase().replace(/[^A-Z0-9,\s]/g, ''))}
+          onChange={(e) => onChange(e.target.value.toUpperCase().replace(/[^A-Z0-9_,\s]/g, ''))}
         />
       )}
     </div>
